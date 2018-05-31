@@ -1,0 +1,29 @@
+
+<ion-header>
+
+  <ion-navbar>
+    <ion-title left>conseilModal</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+
+      <ion-input [(ngModel)]="conseil.content" type="text" rows="4" cols="50" placeholder="Votre conseil ...">
+      </ion-input>
+      
+    </ion-item>
+
+    <ion-item>
+
+      <button ion-button (click)="addConseil(conseil.content)" block>
+          Publiez Votre conseil
+      </button>
+
+    </ion-item>
+
+  </ion-list>
+</ion-content>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1063646526749",
+    "firebase_url": "https://hanimo-3b761.firebaseio.com",
+    "project_id": "hanimo-3b761",
+    "storage_bucket": "hanimo-3b761.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063646526749:android:764d2cb7da3280eb",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1063646526749-9kaa5rchmhqmk7f9ni8m126km8ne8npb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.ionic.starter",
+            "certificate_hash": "9c195d85eca22ceb344eea50f328595c10849846"
+          }
+        },
+        {
+          "client_id": "1063646526749-rsvbpaum0o6i1ol001h7gjcs36hqrces.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUK0a_7TEjd4clrL9G2pjoZKcxsIt9x40"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1063646526749-rsvbpaum0o6i1ol001h7gjcs36hqrces.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

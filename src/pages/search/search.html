@@ -1,0 +1,37 @@
+<ion-header>
+
+  <ion-toolbar>
+      <ion-searchbar (ionInput)="getUsers($event)"></ion-searchbar>
+    </ion-toolbar> 
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let user of list">
+      <ion-avatar item-start (click)="goToUserProfile(user)">
+        <img src="{{user.imageUrl}}">
+      </ion-avatar>
+      <h2>{{user.displayName}}</h2>
+      <button ion-button (click)="sendMessage(user.id)" >Message</button>
+
+      <button *ngIf="user.state == 0" ion-button (click)="sendInvitation(user)" item-end >
+        ajouter
+      </button>
+
+      <button *ngIf="user.state == 2" ion-button (click)="cancelInvitation(user)" item-end >
+        annuler invit
+      </button>
+
+      <button *ngIf="user.state == 3" ion-button (click)="verifInvitation(user)" item-end >
+        accepter invit
+      </button>
+
+      <button *ngIf="user.state == 1" ion-button (click)="verifInvitation(user)" item-end >
+        deja amis
+      </button>
+
+    </ion-item>
+  </ion-list>
+</ion-content>

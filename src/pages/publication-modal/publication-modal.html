@@ -1,0 +1,30 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>publicationModal</ion-title>    
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-item>
+    <ion-input [(ngModel)]="content" placeholder="Exprimer Vous" clearInput></ion-input>
+  </ion-item>
+
+  <ion-row *ngIf="captureDataUrl">
+    <ion-slides zoom="true" pager>
+      <ion-slide *ngFor="let img of captureDataUrl">
+        <img src="{{img}}">
+      </ion-slide>
+    </ion-slides>
+  </ion-row>
+
+  <button ion-button block (click)="publier()">publier</button>
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+      <ion-title (click)="openAction()" >Enrichisser votre publication</ion-title>
+    </ion-toolbar>
+</ion-footer>

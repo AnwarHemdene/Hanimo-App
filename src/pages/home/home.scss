@@ -1,0 +1,124 @@
+page-home {
+
+    //Hanimo
+    @import url('https://fonts.googleapis.com/css?family=Leckerli+One');
+    .title-logo{
+        font-family: 'Leckerli One', cursive;
+        text-align: center;
+        font-size: 4rem;
+        color: #48392a;
+    }
+    .toolbar {
+        .toolbar-background {
+          background: #f2cd5d;
+        }
+    }
+    .card{
+        margin-top: 60px;
+        background: transparent;
+
+     box-shadow: none;
+     border-radius: 0px;
+
+    }
+    .edit{
+        display: block;
+            border-color: #f2cd5d;
+        border-radius: 3px;
+            // width: 140px;
+            // height: 140px;
+            margin-bottom: 100%;
+    }
+    .besoin{
+        background-image:
+    linear-gradient(to right, #6db94b, gray);
+        color: white;
+
+    }
+    .avatar-image{
+        
+            display: block;
+            // border-color: #f2cd5d;
+        border-radius: 3px;
+            width: 140px;
+            height: 140px;
+            margin: 25% 55%;
+            border: 3px solid #f2cd5d;
+
+            // box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+        
+        
+    }
+    .item-md p {
+        
+        font-family: 'Roboto', sans-serif;
+          font-style: italic;
+          font-weight: 100;
+          font-size: 1.2rem;  
+        //   padding-right: 30%;
+    
+
+    }
+    ion-badge.besoin.badge.badge-md{
+        margin-top: 11%;
+        margin-right: 19%;
+        font-size: 0.95rem;
+    font-weight: 100;
+    
+    }
+    .item-md ion-avatar ion-img, .item-md ion-avatar img{
+        border: 1px solid #f2cd5d;
+        
+    }
+    .swiper-slide img{
+        // height: 10% !important;
+        // margin-left: 10px;
+        margin-right: 20px;
+        margin-top:-5px;
+        background: transparent;
+
+        
+    }
+    .marker{
+        width: 25%;
+        position: absolute;
+        z-index: 2;
+    }
+    .like{
+        width: 9.7rem;
+        // border-radius: 30px;
+    }
+    .comment{
+        width: 9.7rem;
+    }
+    .share{
+        width: 9.7rem;
+    }
+    .col{
+        padding: 1px;
+        margin: 1px;
+    }
+    .interactions{
+        flex-direction: row;
+    }
+    .swiper-wrapper {
+        height: auto;}
+
+
+.flex-container {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+  }
+  
+  .flex-start { 
+    justify-content: flex-start; 
+  }
+.button-small-md {
+    padding: 0px;}
+    .button-clear-md{
+        margin-left: -21px;
+        padding:10px;
+    }
+}

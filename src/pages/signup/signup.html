@@ -1,0 +1,112 @@
+<ion-content class="background">
+
+  <ion-content class="background">
+    <ion-grid>
+      <ion-row >
+        <ion-col>
+            <ion-img width="70" height="70" src="../../assets/imgs/logo.png"></ion-img>
+        </ion-col>
+      </ion-row>
+      <ion-row >
+          <ion-col>
+            <div class="title-logo">
+              Hanimo
+            </div>
+          </ion-col>
+        </ion-row>
+      <ion-row>
+        <ion-col>
+            <p> Créez votre compte | <a (click)="goToLoginPage()"> Me Connecter</a></p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col >
+            <ion-input  type="text" placeholder="Prénom"  [(ngModel)]="user.prenom"></ion-input>
+        </ion-col>
+        <ion-col>
+            <ion-input type="text" placeholder="Nom" [(ngModel)]="user.nom" ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input type="text" placeholder="Pseudo" [(ngModel)]="user.displayName"  ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input type="text" placeholder="Votre email" [(ngModel)]="user.email"  ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input type="password" placeholder="Mot de passe"  [(ngModel)]="user.password"  ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-input type="password" placeholder="Confirmation de mot de passe"  [(ngModel)]="verifPassword"  ></ion-input>
+        </ion-col>
+      </ion-row>
+      <ion-row >
+          <ion-col>
+              <button class="login-button flat" ion-button block  (click)="register(user)" >CREER MON COMPTE</button>
+          </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  </ion-content>
+
+
+<!-- 
+  <ion-grid>
+    <ion-row>
+      <ion-col >
+        <ion-item>
+          <ion-avatar class="center" >
+            <ion-icon name="ios-people"></ion-icon>
+            <img src="assets/imgs/edit-profile.png">
+          </ion-avatar>
+        </ion-item>
+          </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+          <ion-item>
+              <ion-label floating>Nom</ion-label>
+              <ion-input type="text" ></ion-input>
+          </ion-item>
+  
+          <ion-item>
+              <ion-label floating>Prénom</ion-label>
+              <ion-input type="text" ></ion-input>
+          </ion-item> 
+           <ion-item>
+            <ion-label floating>Pseudo</ion-label>
+            <ion-input type="text"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Adresse E-mail</ion-label>
+                <ion-input type="text" ></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Mot de passe</ion-label>
+                <ion-input type="password"></ion-input>
+            </ion-item>
+
+          <ion-item>
+              <ion-label floating>confirmer le mot de passe</ion-label>
+              <ion-input type="password"></ion-input>
+          </ion-item>
+  
+          
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="connecter" >      
+            <button class="login-button" ion-button color="sandy-brown"  (click)="register(user)" >S'inscrire</button>
+            
+            
+      </ion-col>
+    </ion-row>
+    </ion-grid> -->
+

@@ -1,0 +1,50 @@
+
+<ion-header>
+  <ion-navbar>
+      <ion-buttons start>
+          <button ion-button (click)="goBack()">
+              Retour
+          </button>
+      </ion-buttons>
+      <ion-title> {{friendUser.displayName}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <div id="chatMessages">
+    <div *ngFor="let message of discussion">
+      <div [class]="message.senderId == currentUserId ? 'innerMessage messageRight' : 'innerMessage messageLeft'">
+        <div class="username">{{ message.senderId}}</div>
+        <div class="messageContent">{{ message.content }}</div>
+        <div *ngIf="message.attachement"><img style="width: 100px; height: 100px;" src="{{message.attachement}}" > </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div id="footer">
+      <div class="elem"><ion-input type="text" [(ngModel)]="message"></ion-input>
+        
+        
+
+      </div>
+      
+      <div class="elem">
+        <button ion-button icon-only (click)="capture(1)">  
+          <ion-icon name="ios-camera-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="elem"><button ion-button icon-only (click)="sendMessage()"><ion-icon name="send"></ion-icon> </button></div>
+    </div>
+
+    <ion-thumbnail *ngIf="imageMessage">
+      <img style="width: 100px; height: 100px;" src="{{imageMessage}}">
+    </ion-thumbnail>
+
+  </ion-toolbar>
+</ion-footer>

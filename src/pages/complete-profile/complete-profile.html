@@ -1,0 +1,41 @@
+<ion-content>
+  <ion-card class="card">
+
+      <h1 ion-text>Completer les informations de votre profil</h1>
+      <img class="avatar" src="assets/imgs/defaultAvatar.png" />
+      <ion-card-content class="card-content">
+          <ion-card-title>
+              Hamza Ben Romdhane 
+          </ion-card-title>
+
+          <ion-list>
+
+              <ion-item>
+                  <ion-label stacked>Numero de telephone</ion-label>
+                  <ion-input type="tel" [(ngModel)]="user.numTel" ></ion-input>
+              </ion-item>
+              <ion-item>
+                  <ion-label stacked>ou habiter vous</ion-label>
+                  <ion-input type="text" [(ngModel)]="user.habiter" ></ion-input>
+              </ion-item>
+              <ion-item>
+                  <ion-label stacked>Date de naissance</ion-label>
+                  <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="user.naissanceDate"></ion-datetime>
+              </ion-item>
+
+              <ion-item>
+                  <ion-label stacked>Sexe</ion-label>
+                  <ion-input type="text" [(ngModel)]="user.sexe" ></ion-input>
+              </ion-item>
+
+              <ion-item>
+                  <button (click)="completeProfile(user)" ion-button block outline>Completer</button>
+              </ion-item>
+          </ion-list>
+
+      </ion-card-content>
+    </ion-card>
+
+
+  
+</ion-content>

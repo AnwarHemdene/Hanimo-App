@@ -1,0 +1,122 @@
+<ion-content class="background">
+  <ion-grid>
+    <ion-row >
+      <ion-col>
+          <ion-img width="100" height="100" src="../../assets/imgs/logo.png"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row >
+        <ion-col>
+          <div class="title-logo">
+            Hanimo
+          </div>
+        </ion-col>
+      </ion-row>
+    <ion-row>
+      <ion-col>
+          <p> Connectez-vous à votre compte </p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+          <ion-input type="text" placeholder="Votre adresse email" [(ngModel)]="email"></ion-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+          <ion-input type="password" placeholder="Votre mot de passe"  [(ngModel)]="password"  ></ion-input>
+          <div class="reverse" > 
+          <a (click)="alertResestPassword()"  >  Mot de passe oublié? </a></div>
+      </ion-col>
+    </ion-row>
+    <ion-row >
+        <ion-col>
+            <button class="login-button flat" ion-button block (click)="signIn(email,password)">SE CONNECTER</button>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <hr> 
+      <ion-col>
+        <p> Me connecter via... </p>
+
+      </ion-col>
+    </ion-row>
+    <ion-row >
+        <ion-col >
+            <button class="google-button flat" ion-button (click)="googlePlusLogin()" >  <ion-icon name="logo-googleplus"></ion-icon>  GOOGLE+</button>
+        </ion-col>
+        <ion-col>
+            <button class="facebook-button flat" ion-button (click)="facebookLogin()" >   <ion-icon name="logo-facebook"></ion-icon>  FACEBOOK</button>
+        </ion-col>
+    </ion-row>
+    <ion-row >
+        <ion-col>
+            <button class="login-button flat" ion-button block (click)="createAcount()" >CREER UN COMPTE</button>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<!-- 
+
+<ion-row>
+<ion-col >
+  <ion-item>
+    <ion-avatar class="center" >
+      <img src="assets/imgs/HanimoLogo.jpg">
+    </ion-avatar>
+    <p class="connecter-vous-text"> Connectez Vous</p>
+  </ion-item>
+    </ion-col>
+</ion-row>
+<ion-row>
+<ion-col>
+      <ion-item>
+        <ion-label floating>Adresse Email</ion-label>
+        <ion-input type="email" [(ngModel)]="email" flex ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Mot de passe</ion-label>
+        <ion-input type="password" [(ngModel)]="password" ></ion-input>
+      </ion-item>
+</ion-col>
+</ion-row>
+<ion-row>
+<ion-col>
+      <ion-item (click)="alertResestPassword()" >
+          <div class="reverse">
+             <a>mot de passe oublié?</a></div>
+      
+      </ion-item>
+</ion-col>
+</ion-row>
+<ion-row>
+<ion-col class="connecter" >      
+      <button class="login-button" (click)="signIn(email,password)" ion-button color="danger" round outline>Se Connecter</button>
+      <hr>  
+      <p >Ou connecter vous via</p>
+      
+</ion-col>
+</ion-row>   
+<ion-row justify-content-star>
+<ion-col > 
+      <button class="facebook-button" (click)="facebookLogin()" ion-button color="Primary" outline icon-left>
+        <ion-icon name="logo-facebook"></ion-icon>
+        <div>Facebook</div>
+      </button>
+</ion-col>
+<ion-col >
+      <button class="google-button" (click)="googlePlusLogin()" ion-button color="danger" outline  icon-left>
+        <ion-icon name="logo-google"></ion-icon>
+        <div>Google+</div>
+      </button>
+</ion-col>
+</ion-row>
+<ion-row>
+<ion-col> 
+      <!-- <b> Ou </b> -->
+      <!-- <button (click)="createAcount()" block ion-button color="secondary"  icon-left>
+       
+        <div>Creer votre compte</div>
+      </button> 
+</ion-col>
+</ion-row> --> 

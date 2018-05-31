@@ -1,0 +1,92 @@
+page-login 
+{
+    //Hanimo
+    @import url('https://fonts.googleapis.com/css?family=Leckerli+One');
+    //P
+    @import url('https://fonts.googleapis.com/css?family=Roboto');
+
+    .background{
+        background-image: url('../../assets/imgs/bg.png');
+    }
+    .title-logo{
+        font-family: 'Leckerli One', cursive;
+        text-align: center;
+        font-size: 3.5rem;
+        color: #48392a;
+    }
+    ion-img {
+        display: block;
+        margin-left: 30%;
+        margin-right: auto;
+        background: #eee0;
+    }
+    p{
+        padding-top: 0px;
+    padding-bottom: 0px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2rem;
+    font-weight: 100;
+    color: #48392a;
+    // font-style: thin;
+    }
+    .grid{
+        padding-top: 10%;
+    }
+    ion-input{
+        height: 50px;
+        border: #f2cd5d solid;
+        background-color: #fbf2c0;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      font-size: 1.3em;  
+      font-family: 'Roboto', sans-serif;
+      font-style: italic;
+      font-weight: 100;
+
+    }
+    a{
+        color: #368e36;
+    }
+    .reverse {
+        text-align: right ;
+  }
+  .login-button{
+
+    text-align: center;
+    color: #48392a;
+    background-color: #f2cd5d;
+  }
+  .col{
+      padding-left:0px;
+      padding-right:0px;
+
+      padding-top: 5px;
+      padding-bottom: 5px;  
+  }
+  .flat {
+      
+height: 40px;
+ box-shadow: none;
+ border-radius: 0px;
+ width: 100%;
+ margin: 0em !important;
+ padding: 0% !important;
+ font-size: 1.7rem;
+ font-weight: 400;
+
+  }
+
+  .google-button {
+      background-color: #ea4e3f;
+}
+.facebook-button{
+    background-color: #486ba6;
+}
+.ion-logo-googleplus:before , .ion-logo-facebook:before {
+    width: 100%;
+    margin-right: 10px;
+    margin-left: -17px;
+    font-size: 35px;
+}
+}

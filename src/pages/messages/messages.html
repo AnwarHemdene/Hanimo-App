@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-navbar  color="primary">
+      <button ion-button icon-only menuToggle  >
+          <ion-icon name="menu"></ion-icon>
+        </button>
+    <ion-title>Messages</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <div padding>
+    <ion-segment [(ngModel)]="choix">
+      <ion-segment-button value="messages">
+        Messages
+      </ion-segment-button>
+      <ion-segment-button value="amis">
+        Amis connectés
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div [ngSwitch]="choix">
+    <ion-list *ngSwitchCase="'messages'">
+
+      <!-- Afficher messages  -->
+
+    <ion-item-sliding>
+          <!-- First User -->
+      <ion-item *ngFor="let message of messageList" (click)="goToMessage(message.userId)" >
+          <ion-thumbnail item-start>
+            <ion-avatar item-start>
+              <img src="{{message.avatar}}">
+            </ion-avatar>
+          </ion-thumbnail>
+            <h2>{{message.displayName}}</h2>
+            <p *ngIf="verifSeenMessage(message) == 1">Vous: {{message.content}}</p>
+            <p *ngIf="verifSeenMessage(message) == 3" >{{message.content}}</p>
+            <p *ngIf="verifSeenMessage(message) == 2" style="font-weight: bold;" >{{message.content}}</p>
+        </ion-item>
+      </ion-item-sliding>
+    </ion-list>
+      
+  
+    <ion-list *ngSwitchCase="'amis'">
+
+      <!-- Afficher Liste Amis en ligne -->
+
+      <ion-list>
+          <ion-item>
+            <ion-avatar item-start>
+              <img src="assets/imgs/hanimo-logo.png">
+            </ion-avatar>
+            <h2>Hamza Ben Romdhane</h2>
+          </ion-item>
+        </ion-list>
+
+    </ion-list>
+        
+  </div>
+
+    
+</ion-content>

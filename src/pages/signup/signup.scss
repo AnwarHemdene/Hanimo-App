@@ -1,0 +1,79 @@
+page-signup {    // Avatar
+        //Hanimo
+        @import url('https://fonts.googleapis.com/css?family=Leckerli+One');
+        //P
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+    
+        .background{
+            background-image: url('../../assets/imgs/bg.png');
+        }
+        .title-logo{
+            font-family: 'Leckerli One', cursive;
+            text-align: center;
+            font-size: 2.5rem;
+            color: #48392a;
+        }
+        ion-img {
+            display: block;
+            margin-left: 37%;
+            margin-right: auto;
+            background: #eee0;
+        }
+        p{
+            padding-top: 0px;
+        padding-bottom: 0px;
+        text-align: center;
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.9rem;
+        font-weight: 100;
+        color: #48392a;
+        // font-style: thin;
+        }
+        .grid{
+            padding-top: 5%;
+        }
+        ion-input{
+            height: 40px;
+            border: #f2cd5d solid 2px;
+            background-color: #fbf2c0;
+
+          font-size: 1.25em;  
+          font-family: 'Roboto', sans-serif;
+          font-style: italic;
+          font-weight: 100;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+        }
+       
+        a{
+            color: #b68f40;
+            font-weight: 400;
+            text-decoration: underline;
+
+        }
+      .login-button{
+    
+        text-align: center;
+        color: #666666;
+        background-color: #cccccc;
+      }
+      .flat {
+          
+    height: 40px;
+     box-shadow: none;
+     border-radius: 0px;
+     width: 100%;
+     margin: 0em !important;
+     padding: 0% !important;
+     font-size: 1.7rem;
+     font-weight: 400;
+    
+      }
+      .content-md {
+        color: #48392a;
+        font-family: 'Roboto', sans-serif;
+
+    }
+
+    
+}

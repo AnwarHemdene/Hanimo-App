@@ -1,0 +1,37 @@
+<!--
+  Generated template for the AddfeedbackmodalPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+    <ion-navbar>
+        <ion-buttons start>
+            <button ion-button (click)="goBack()">
+                <ion-icon name="md-arrow-back"></ion-icon>
+            </button>
+        </ion-buttons>
+      <ion-title>Envoyer un feedback</ion-title>
+    </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+    <ion-item>
+        <ion-label floating >A propos</ion-label>
+        <ion-input [(ngModel)]="feedBack.about" type="text"> </ion-input>
+    </ion-item> 
+
+    <ion-item>
+        <ion-label floating >Contenu</ion-label>
+        <ion-input [(ngModel)]="feedBack.content" type="text"> </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <button ion-button (click)="sendFeedback(feedBack)" item-end>Envoyer</button>
+    </ion-item>
+
+</ion-content>

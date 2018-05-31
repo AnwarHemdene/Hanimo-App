@@ -1,0 +1,63 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>settingsProfile</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-item>
+      <ion-label fixed>Nom a afficher</ion-label>
+      <ion-input [(ngModel)]="currentUser.displayName" placeholder="{{currentUser.displayName}}"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label fixed>Description</ion-label>
+    <ion-input [(ngModel)]="currentUser.description" placeholder="{{currentUser.description}}"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label fixed>nom</ion-label>
+    <ion-input [(ngModel)]="currentUser.nom" placeholder="{{currentUser.nom}}" ></ion-input>
+  </ion-item> 
+
+  <ion-item>
+    <ion-label fixed>prenom</ion-label>
+    <ion-input [(ngModel)]="currentUser.prenom" placeholder="{{currentUser.prenom}}"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label fixed>numero telephone</ion-label>
+    <ion-input [(ngModel)]="currentUser.tel" type="tel" placeholder="{{currentUser.tel}}"></ion-input>
+  </ion-item>
+
+  <button ion-button block (click)="updateProfile(currentUser)">Valider les modification</button>
+
+  <!-- seperator here -->
+
+  <div *ngIf="currentUser.connectionType == 'mail'" >
+    <h2>Changer votre mot de passe</h2>
+
+    <ion-item>
+      <ion-label fixed>Ancien mot de passe</ion-label>
+      <ion-input [(ngModel)]="oldPassword"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label fixed>Nouveau mot de passe</ion-label>
+      <ion-input [(ngModel)]="newPassword"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label fixed>Confirmer votre nouveau mot de passe</ion-label>
+      <ion-input [(ngModel)]="confirmNewPassword"></ion-input>
+    </ion-item>
+
+    <button ion-button block (click)="resetPassword()">Changer mot de passe</button>
+  </div>
+
+
+</ion-content>

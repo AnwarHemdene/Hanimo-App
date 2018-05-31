@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-navbar>
+      <button ion-button icon-only menuToggle  >
+          <ion-icon name="menu"></ion-icon>
+        </button>
+    <ion-title>
+      Invitations
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-list *ngIf="users" >
+
+        <ion-item  *ngFor="let user of users">
+          <ion-thumbnail item-start>
+            <img src="{{user.imageUrl}}">
+          </ion-thumbnail>
+          <h2>{{user.displayName}} </h2>
+          <button (click)="acceptInvitation(user.idSender,user.key)" ion-button clear item-end>Accept</button>
+          <button (click)="declineInvitation(user.key)" ion-button clear item-end>Decline</button>
+        </ion-item>
+    
+      </ion-list>
+</ion-content>

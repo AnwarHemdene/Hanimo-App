@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar>
+      <button ion-button icon-only menuToggle  >
+          <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title>
+      liste d'amis
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+    <ion-searchbar placeholder="trouver un ami" (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-list *ngIf="friends" >
+
+      <ion-item *ngFor="let friend of tab" >
+
+        <ion-avatar item-start (click)="goToUserProfile(friend.userId)" >
+          <img src="{{friend.avaterUrl}}">
+        </ion-avatar>
+
+        <h2>{{friend.displayName}}</h2>
+        <button ion-button (click)="message(friend.userId)" item-end>message</button>
+        <button ion-button (click)="deleteFriend(friend.key,friend.index)" item-end>Supprimer</button>
+      </ion-item>
+
+    </ion-list>
+</ion-content>

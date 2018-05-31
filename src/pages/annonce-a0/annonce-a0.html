@@ -1,0 +1,74 @@
+<ion-header>
+    <ion-navbar color="sandy-brown">
+      <ion-title>Animal En Danger</ion-title>
+    </ion-navbar>
+  </ion-header>
+
+  <ion-content>
+
+    <ion-card>
+
+      <ion-card-header>
+        <div class="category cat-work">Danger</div>
+      </ion-card-header>
+      <b></b>
+
+      <ion-card-content>
+
+      <ion-grid>
+          <ion-row>
+            <ion-item>
+              <ion-label floating >Titre de l'annonce</ion-label>
+              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>
+            </ion-item> 
+          </ion-row>
+
+          <ion-row>
+            <ion-col col-lg-2>
+              <ion-item >
+                  <ion-label floating >Votre description</ion-label>
+                  <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text" rows="4" cols="50"> </ion-textarea>
+                </ion-item>
+              </ion-col>
+              <ion-col col-3>
+                <button ion-button clear class="button-md-marker">
+                  <ion-icon name="md-locate" color="sos" class="ion-md-locate-marker"></ion-icon>
+                  <br><br>
+                </button>
+                {{locationString}}
+              </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-item>
+              <button ion-button  (click)="capture(1)" color="sandy-brown">
+                <ion-icon name="ios-camera"> Camera !</ion-icon>
+              </button>
+              <!-- <img [src]="captureDataUrl[0]" *ngIf="captureDataUrl[0]" /> -->
+              <button ion-button (click)="capture(0)" color="sandy-brown">
+                <ion-icon name="ios-image">Gallerie !</ion-icon>
+              </button>
+
+              <ion-row *ngIf="captureDataUrl">
+                  <ion-slides zoom="true" pager>
+                    <ion-slide *ngFor="let img of captureDataUrl">
+                      <img src="{{img}}">
+                    </ion-slide>
+                  </ion-slides>
+              </ion-row>
+            </ion-item>
+          </ion-row>
+
+          <ion-row>
+            <ion-item>
+              <button (click)="publierAnnonce(annonce)" ion-button  color="sos">Publier</button>
+            </ion-item>
+          </ion-row>
+          
+        </ion-grid>
+
+      </ion-card-content>
+
+    </ion-card>
+
+  </ion-content>

@@ -1,0 +1,39 @@
+<!-- <ion-menu [content]="content" >
+  <ion-header  >
+    <ion-toolbar  color="primary" >
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-list>
+        
+        <ion-list no-lines>
+                <ion-item>
+                  <ion-avatar item-start>
+                    <img src="./../assets/imgs/avatar.jpg">
+                  </ion-avatar><br>
+                  
+                </ion-item>
+                <ion-item>
+                    <h2> Username</h2>
+                </ion-item>
+          </ion-list>
+       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p.component)">
+        
+        {{p.title}} 
+      </button> 
+    </ion-list>
+  </ion-content>
+
+</ion-menu> -->
+
+<!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
+<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
+
+<ion-tabs>
+  <ion-tab [root]="tab1Root" tabTitle="Accueil" tabIcon="ios-home-outline"></ion-tab>
+<!--   <ion-tab [root]="tab2Root" tabTitle="Messages" tabIcon="ios-chatboxes-outline"></ion-tab> -->
+  <ion-tab [root]="tab3Root" tabTitle="Poster" tabIcon="ios-create-outline"></ion-tab>
+<!--   <ion-tab [root]="tab4Root" tabTitle="Invitation" tabIcon="ios-person-add-outline"></ion-tab> -->
+</ion-tabs>

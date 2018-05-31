@@ -1,0 +1,80 @@
+<ion-header> 
+    <ion-toolbar class="toolbar-background ">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title class="title-logo">Hanimo</ion-title> 
+      <ion-buttons end>
+        <button ion-button icon-only (click)="rootSearch()"  >
+          <ion-icon name="search"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar> 
+  </ion-header>
+
+<ion-content>
+  <!-- this fab is placed at bottom right -->
+  <ion-fab bottom right>
+    <button ion-fab color="primary">Button</button>
+    <ion-fab-list side="top">
+      <button (click)="openConseilModal()" ion-fab>Conseil</button>
+      <button (click)="openPublicationModal()" ion-fab>Publication</button>
+      <button (click)="goToA3()" ion-fab>A3</button>
+      <button (click)="goToA2()" ion-fab>A2</button>
+      <button (click)="goToA1()" ion-fab>A1</button>
+      <button (click)="goToA0()" ion-fab>A0</button>
+    </ion-fab-list>
+  </ion-fab>
+  <ion-card >
+    <ion-item>
+      <ion-avatar item-start class="edit" ><img src="assets/imgs/Moi.jpg"></ion-avatar>
+      <h3>Anwar Hemdene</h3>
+      <p>05/11/1955 -24:24 </p><ion-badge class="besoin"item-end>Besoin d'aide</ion-badge>
+    </ion-item>
+    <!--> galerie slider -->
+    <ion-row>
+      
+      <ion-slides pager>
+        <ion-slide>
+          <img src="assets/imgs/animal1.jpeg">
+          <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab>          
+        </ion-slide>
+        <ion-slide>
+          <img src="assets/imgs/animal2.jpeg">
+          <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab>
+        </ion-slide>
+        
+      </ion-slides>
+      
+    </ion-row>
+    <ion-card-content>
+      <p>Wait a minute. Wait a minute, Doc. Uhhh... Are you telling me that you built a time machine... out of a DeLorean?! Whoa. This is heavy.</p>
+    
+<ul class="flex-container flex-start">      <li class="flex-item">
+        <button ion-button icon-left clear >
+          <div class="like"><img src="assets/imgs/like.png"></div>  
+        </button>
+      </li>
+      <li class="flex-item">
+        <button ion-button icon-left clear >
+          <div class="comment"><img src="assets/imgs/comment.png"></div>  
+        </button>
+      </li>
+      <li class="flex-item">
+        <button ion-button icon-left clear >
+          <div class="share">
+            <img  src="assets/imgs/share.png">
+          </div>  
+        </button>
+      </li>
+    </ul>
+  </ion-card-content>
+  </ion-card>    
+
+<!-- <button (click)="signOut()" ion-button block>Sign Out</button>
+<button (click)="getFriendList()" ion-button block>Friend List</button>
+<button (click)="showFriend()" ion-button block>show Friend List</button>
+<button (click)="updateReputation()" ion-button block>updateReputation</button>
+<button (click)="getPosition()" ion-button block>getPosition</button> -->
+<button (click)="sendNotification()" ion-button block>sendNotification</button>
+</ion-content>

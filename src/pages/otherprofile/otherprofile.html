@@ -1,0 +1,109 @@
+<!--
+  Generated template for the OtherprofilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+      <ion-buttons start>
+          <button ion-button (click)="goBack()">
+              <ion-icon name="md-arrow-back"></ion-icon>
+          </button>
+      </ion-buttons>
+    <ion-title>{{user.displayName}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+    <img id="profile-image" src="{{user.imageUrl}}">
+    <ion-item>
+        <!-- amis -->
+      <button item-start *ngIf="relationStatus == 1" ion-button >Amis</button>
+      <button item-start (click)="supprimerAmis()" *ngIf="relationStatus == 1" ion-button >Supprimer</button>
+      
+      <!-- envoyer invitation -->
+      <button item-start (click)="sendInvitation()" *ngIf="relationStatus == 0" ion-button >Envoyer une invitation</button>
+
+      <!-- invitation envoyee -->
+      <button item-start (click)="annulerInvitation()" *ngIf="relationStatus == 2" ion-button >Invitation envoyée</button>
+      
+      <!-- accepter ou decliner invitation -->
+      <button item-start (click)="accepterInvitation()" *ngIf="relationStatus == 3" ion-button >Accrepter l invitation</button>
+      <button item-start (click)="declinerInvitation()" *ngIf="relationStatus == 3" ion-button >decliner l invitation</button>
+
+      <!-- a propos -->
+      <button item-end ion-button >A propos</button>
+    </ion-item>
+    
+
+    <ion-list *ngIf="publications && relationStatus == 1" >
+        <ion-card *ngFor="let pub of publications" >
+
+            <ion-item>
+                <ion-avatar item-start>
+                  <img src="{{user.imageUrl}}">
+                </ion-avatar>
+                <ion-card-header *ngIf="pub.order == 'sharingannonce'; else templateName" >
+                    <p>{{user.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>
+                </ion-card-header>
+                <p>{{pub.time}}</p>
+              </ion-item>
+
+            <ng-template #templateName>
+                {{user.displayName}} a partagé une {{pub.order}}
+            </ng-template>
+
+            <ion-row>
+                <ion-slides zoom="true" pager>
+                    <ion-slide *ngFor="let img of pub.imagesUrl">
+                        <img style="width: 359px; height: 300px;" src="{{img}}" imageViewer>
+                    </ion-slide>
+                </ion-slides>
+            </ion-row>
+
+            <ion-card-content>
+                <p *ngIf="pub.order == 'annonce'" >{{pub.descAnnonce}}</p>
+                <p *ngIf="pub.order == 'publication'" >{{pub.content}}</p>
+            </ion-card-content>
+
+            <ion-row>
+                <!-- *ngIf="!isLiked(pub)"  -->
+                <ion-col *ngIf="!pub.liked" >
+                    <button (click)="likePub(pub)" ion-button icon-left clear small>
+                    <ion-icon name="ios-heart-outline"></ion-icon>
+                    <div>J'aime</div>
+                    </button>
+                </ion-col>
+            
+                <!--   *ngIf="isLiked(pub)"  -->
+                <ion-col *ngIf="pub.liked" >
+                    <button (click)="dislikePub(pub)" ion-button icon-left clear small>
+                    <ion-icon name="ios-heart"></ion-icon>
+                    <div>J'aime pas</div>
+                    </button>
+                </ion-col>
+            
+                <ion-col>
+                    <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>
+                    <ion-icon name="text"></ion-icon>
+                    <div>Commentaires</div>
+                    </button>
+                </ion-col>
+            
+            </ion-row>
+            
+                <ion-item>
+                    <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>
+                    <button ion-button (click)="commenter(pub)" item-end>COM</button>
+                </ion-item>
+
+        </ion-card>
+    </ion-list>
+
+
+</ion-content>

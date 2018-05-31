@@ -1,0 +1,26 @@
+
+<ion-header>
+  <ion-navbar>
+    <button ion-button icon-only menuToggle  >
+        <ion-icon name="menu"></ion-icon>
+    </button>
+  <ion-title>
+    Feedback
+  </ion-title>
+</ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-fab bottom right >
+      <button (click)="goToAddFeeback()" ion-fab><ion-icon ios="ios-add" md="md-add"></ion-icon></button>
+  </ion-fab>
+
+  <ion-list *ngIf="feedbacks" >
+    <ion-item *ngFor="let feed of feedbacks" >
+      <h2>{{feed.about}}</h2>   
+      <p>{{feed.contenu}}</p>
+    </ion-item>
+  </ion-list>
+  
+</ion-content>
