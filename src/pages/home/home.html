@@ -15,14 +15,14 @@
 <ion-content>
   <!-- this fab is placed at bottom right -->
   <ion-fab bottom right>
-    <button ion-fab color="primary">Button</button>
+    <button ion-fab id="cancel" ><img src="assets/imgs/cancel.png"></button>
     <ion-fab-list side="top">
-      <button (click)="openConseilModal()" ion-fab>Conseil</button>
-      <button (click)="openPublicationModal()" ion-fab>Publication</button>
-      <button (click)="goToA3()" ion-fab>A3</button>
-      <button (click)="goToA2()" ion-fab>A2</button>
-      <button (click)="goToA1()" ion-fab>A1</button>
-      <button (click)="goToA0()" ion-fab>A0</button>
+      <button (click)="openConseilModal()" ion-fab id="conseil"><img src="assets/imgs/autre.png"></button>
+      <button (click)="openPublicationModal()" ion-fab id="pub"><img src="assets/imgs/autre.png"></button>
+      <button (click)="goToA3()" ion-fab id="a3"><img src="assets/imgs/aide.png"></button>
+      <button (click)="goToA2()" ion-fab id="a2"><img src="assets/imgs/foyer.png"></button>
+      <button (click)="goToA1()" ion-fab id="a1"><img src="assets/imgs/maladie.png"></button>
+      <button (click)="goToA0()" ion-fab id="a0"><img src="assets/imgs/danger.png"></button>
     </ion-fab-list>
   </ion-fab>
   <ion-card >

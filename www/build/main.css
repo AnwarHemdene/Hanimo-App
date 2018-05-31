@@ -25927,6 +25927,41 @@ page-home .button-clear-md {
   padding: 10px;
 }
 
+page-home #conseil {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#456fe2), to(#021855));
+  background-image: linear-gradient(to top left, #456fe2, #021855);
+}
+
+page-home #pub {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#456edf), to(#03123a));
+  background-image: linear-gradient(to top left, #456edf, #03123a);
+}
+
+page-home #a3 {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#6fa863), to(#155508));
+  background-image: linear-gradient(to top left, #6fa863, #155508);
+}
+
+page-home #a2 {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#7771ed), to(#2b0569));
+  background-image: linear-gradient(to top left, #7771ed, #2b0569);
+}
+
+page-home #a1 {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#e0ae5e), to(#b47003));
+  background-image: linear-gradient(to top left, #e0ae5e, #b47003);
+}
+
+page-home #a0 {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#f7674d), to(#9b1b04));
+  background-image: linear-gradient(to top left, #f7674d, #9b1b04);
+}
+
+page-home #cancel {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#d86851), to(#ce9803));
+  background-image: linear-gradient(to top left, #d86851, #ce9803);
+}
+
 page-login {
 }
 
