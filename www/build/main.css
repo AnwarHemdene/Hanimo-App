@@ -25928,8 +25928,8 @@ page-home .button-clear-md {
 }
 
 page-home #conseil {
-  background-image: -webkit-gradient(linear, right bottom, left top, from(#456fe2), to(#021855));
-  background-image: linear-gradient(to top left, #456fe2, #021855);
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#468499), to(#20B2AA));
+  background-image: linear-gradient(to top left, #468499, #20B2AA);
 }
 
 page-home #pub {
@@ -25960,6 +25960,34 @@ page-home #a0 {
 page-home #cancel {
   background-image: -webkit-gradient(linear, right bottom, left top, from(#d86851), to(#ce9803));
   background-image: linear-gradient(to top left, #d86851, #ce9803);
+}
+
+page-home ion-fab-list img {
+  max-width: 70%;
+}
+
+page-home button[ion-fab] {
+  overflow: visible;
+  position: relative;
+}
+
+page-home button[ion-fab] ion-label {
+  position: absolute;
+  top: -8px;
+  right: 40px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  line-height: 24px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+page-home .fab {
+  contain: layout;
+}
+
+page-home .fab ion-icon {
+  font-size: 4.4rem;
 }
 
 page-login {

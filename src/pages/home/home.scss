@@ -126,7 +126,8 @@ page-home {
         background-image:
         linear-gradient(
           to top left, 
-          #456fe2, #021855
+          #468499
+, #20B2AA
         );
     }
     #pub{
@@ -169,14 +170,32 @@ page-home {
         );
     }
 
+ion-fab-list{
+    img {
+        max-width: 70%;}
+        
+}
+button[ion-fab] {
+    overflow: visible;
+    position: relative;
 
+    ion-label {
+        position: absolute;
+        top: -8px;
+        right: 40px;
 
-
-
-
-
-
-    
+        color: white;
+        background-color: rgba(0,0,0,0.7);
+        line-height: 24px;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+}
+.fab {
+    contain: layout;
+    ion-icon {
+        font-size: 4.4rem;}
+}
 }
 
 

@@ -15,14 +15,21 @@
 <ion-content>
   <!-- this fab is placed at bottom right -->
   <ion-fab bottom right>
-    <button ion-fab id="cancel" ><img src="assets/imgs/cancel.png"></button>
+    <button ion-fab id="cancel" ><ion-icon name="ios-create-outline" color="light"></ion-icon></button>
     <ion-fab-list side="top">
-      <button (click)="openConseilModal()" ion-fab id="conseil"><img src="assets/imgs/autre.png"></button>
-      <button (click)="openPublicationModal()" ion-fab id="pub"><img src="assets/imgs/autre.png"></button>
-      <button (click)="goToA3()" ion-fab id="a3"><img src="assets/imgs/aide.png"></button>
-      <button (click)="goToA2()" ion-fab id="a2"><img src="assets/imgs/foyer.png"></button>
-      <button (click)="goToA1()" ion-fab id="a1"><img src="assets/imgs/maladie.png"></button>
-      <button (click)="goToA0()" ion-fab id="a0"><img src="assets/imgs/danger.png"></button>
+      <button (click)="openConseilModal()" ion-fab id="conseil">  <ion-icon name="md-alert" color="light"></ion-icon>
+
+        <ion-label>Conseil</ion-label></button>
+      <button (click)="openPublicationModal()" ion-fab id="pub"><img src="assets/imgs/autre.png">
+        <ion-label>Publication</ion-label></button>
+      <button (click)="goToA3()" ion-fab id="a3"><img src="assets/imgs/aide.png">
+        <ion-label>Besoin d'aide</ion-label></button>
+      <button (click)="goToA2()" ion-fab id="a2"><img src="assets/imgs/foyer.png">
+        <ion-label>Cherche foyer</ion-label></button>
+      <button (click)="goToA1()" ion-fab id="a1"><img src="assets/imgs/maladie.png">
+        <ion-label>Blessure/Maladie</ion-label></button>
+      <button (click)="goToA0()" ion-fab id="a0"><img src="assets/imgs/danger.png">
+        <ion-label>En danger</ion-label></button>
     </ion-fab-list>
   </ion-fab>
   <ion-card >
@@ -37,7 +44,10 @@
       <ion-slides pager>
         <ion-slide>
           <img src="assets/imgs/animal1.jpeg">
-          <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab>          
+          <button outline>
+              <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab> 
+          </button>
+                   
         </ion-slide>
         <ion-slide>
           <img src="assets/imgs/animal2.jpeg">
@@ -52,12 +62,14 @@
     
 <ul class="flex-container flex-start">      <li class="flex-item">
         <button ion-button icon-left clear >
-          <div class="like"><img src="assets/imgs/like.png"></div>  
+          <div class="like">
+              <img src="assets/imgs/like.png"></div>  
         </button>
       </li>
       <li class="flex-item">
         <button ion-button icon-left clear >
-          <div class="comment"><img src="assets/imgs/comment.png"></div>  
+          <div class="comment">
+              <img src="assets/imgs/comment.png"></div>  
         </button>
       </li>
       <li class="flex-item">
@@ -76,5 +88,5 @@
 <button (click)="showFriend()" ion-button block>show Friend List</button>
 <button (click)="updateReputation()" ion-button block>updateReputation</button>
 <button (click)="getPosition()" ion-button block>getPosition</button> -->
-<button (click)="sendNotification()" ion-button block>sendNotification</button>
+<!-- <button (click)="sendNotification()" ion-button block>sendNotification</button> -->
 </ion-content>
