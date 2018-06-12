@@ -108,4 +108,5 @@
     <plugin name="cordova-plugin-fcm" spec="^2.1.2" />
     <engine name="android" spec="~6.3.0" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.6" />
+    <allow-navigation href="http://192.168.1.7:8100" />
 </widget>

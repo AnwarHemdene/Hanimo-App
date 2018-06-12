@@ -26,7 +26,7 @@
                 </ion-fab>
             </ion-item>
             <ion-item class="parttransparant">
-                <p >{{currentUser.displayName}}</p>      
+                <div class="name">{{currentUser.displayName}}</div>      
                 <h5>Animal lover <ion-badge item-end> <ion-icon name="md-star" color="light"></ion-icon>20</ion-badge></h5>
             </ion-item>
             <ion-item>
@@ -49,11 +49,16 @@
         <ion-list *ngIf="publications" >
             <ion-card *ngFor="let pub of publications" >
                 <ion-item>
-                    <ion-avatar item-start>
+                    <!-- <ion-avatar item-start>
                         <img src="{{currentUser.imageUrl}}">
-                    </ion-avatar>
+                    </ion-avatar> -->
+                    <ion-avatar item-start class="edit" ><img src="assets/imgs/Moi.jpg"></ion-avatar>
                     <ion-card-header *ngIf="pub.order == 'sharingannonce'; else templateName" >
-                        <p>{{currentUser.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>
+                            <ion-item>
+                                   
+                                    <h3>{{currentUser.displayName}} à partager</h3> <ion-badge class="besoin"item-end>{{pub.type}}</ion-badge>
+                        <p> de {{pub.userDipslayName}}</p>
+                        </ion-item>
                     </ion-card-header>
                     <p>{{pub.time}}</p>
                     <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>

@@ -1,3 +1,123 @@
 page-annonce-a1 {
 
+    @import url('https://fonts.googleapis.com/css?family=Leckerli+One');
+    .title-logo{
+        font-family: 'Leckerli One', cursive;
+        text-align: center;
+        font-size: 4rem;
+        color: #48392a;
+    }
+        .date{
+          padding: .9em 1em;
+          text-align: right;
+          color: #666;
+        margin-top: 7%;
+      font-size: 1.7rem;
+      font-weight: 200;
+        }
+        
+        .category{
+          border-bottom: 2em solid #0062A1;
+          border-left: .5em solid transparent;
+          height:0;
+          display: block;
+          color: white;
+          line-height: 2em;
+          position:absolute;
+          left:-1.5em;
+          top:.5em;
+          padding:0 1em;
+          text-transform: uppercase;
+          margin-left:1em;
+          
+        }
+        .category:before {
+          content:'';
+            width: 0; 
+            height: 0; 
+          overflow: hidden;
+            border-top: .5em solid #0062A1;
+            border-left:.5em solid transparent; 
+          position:absolute;
+          left:-.5em;
+          top:2em;
+        }
+        .category:after {
+          content:'';
+            width: 0; 
+            height: 0; 
+          overflow: hidden;
+            border-top: 1em solid transparent;
+            border-bottom: 1em solid transparent; 
+            border-left:.5em solid #0062A1; 
+          position:absolute;
+          right:-.5em;
+          top:0;
+        }
+        // linear-gradient(
+        //     to top left, 
+        //     #f7674d, #9b1b04
+        //   );
+        
+        .category.cat-work{border-bottom-color: #b47003;}
+        .category.cat-work:before{border-top-color: #b47003;}
+        .category.cat-work:after{border-left-color: #b47003;}
+  
+        .button-md-marker{
+              height: 7rem;
+      font-size: 2.3rem;
+      border-radius: 100%;
+      padding: 0px;
+        }
+        .ion-md-locate-marker:before {
+      font-size: 4rem;
+    }
+    .input-wrapper {
+      text-align: center;}
+  
+      // .swiper-pagination-bullet-active {
+      // background: color($colors, sandy-brown);}
+  
+      .card-header-md {
+      padding-top: 1px;
+      padding-right: 1px;
+      padding-bottom: 0px;
+      padding-left: 1px;}
+      .swiper-slide img {
+      margin-top: 0px;}
+        ion-input {
+              color: #444342;
+              font-weight: 100;
+              height: 70%;
+              padding-bottom: 7px;
+        }
+        ion-textarea{
+          color: #444342;
+          font-weight: 100;
+    }
+  
+  
+  
+        .item-input ion-input, .item-input ion-textarea {
+      color: #444342;
+      border: #f2cd5d solid 1px;
+    }
+  
+      .row{
+        align-items: center;
+      }
+    
+      ion-card{
+        // back
+      }
+      .navbar{
+        color: #f2cd5d;
+      }
+      .editButton{
+        background-image:
+        linear-gradient(
+          to top left, 
+          #e0ae5e, #b47003
+        );
+      }
 }

@@ -156,49 +156,49 @@ export class HomePage {
   }
 
   goToA0(){
-    this.diagnostic.isLocationEnabled().then(res=>{
-      if(res==true){
+    // this.diagnostic.isLocationEnabled().then(res=>{
+    //   if(res==true){
         this.navCtrl.push(AnnonceA0Page);
-      }else{
-        alert("Veuillez activez votre gps");
-      }
+    //   }else{
+    //     alert("Veuillez activez votre gps");
+    //   }
 
-    });
+    // });
   }
 
   goToA1(){
-    this.diagnostic.isLocationEnabled().then(res=>{
-      if(res==true){
+    // this.diagnostic.isLocationEnabled().then(res=>{
+    //   if(res==true){
         this.navCtrl.push(AnnonceA1Page);
-      }else{
-        alert("Veuillez activez votre gps");
-      }
+    //   }else{
+    //     alert("Veuillez activez votre gps");
+    //   }
 
-    });
+    // });
     
   }
 
   goToA2(){
-    this.diagnostic.isLocationEnabled().then(res=>{
-      if(res==true){
+    // this.diagnostic.isLocationEnabled().then(res=>{
+    //   if(res==true){
         this.navCtrl.push(AnnonceA2Page);
-      }else{
-        alert("Veuillez activez votre gps");
-      }
+    //   }else{
+    //     alert("Veuillez activez votre gps");
+    //   }
 
-    });
+    // });
     
   }
 
   goToA3(){
-    this.diagnostic.isLocationEnabled().then(res=>{
-      if(res==true){
+    // this.diagnostic.isLocationEnabled().then(res=>{
+    //   if(res==true){
         this.navCtrl.push(AnnonceA3Page);
-      }else{
-        alert("Veuillez activez votre gps");
-      }
+    //   }else{
+    //     alert("Veuillez activez votre gps");
+    //   }
 
-    });
+    // });
     
   }
 

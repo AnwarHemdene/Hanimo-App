@@ -4,6 +4,209 @@ webpackJsonp([0],{
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LoginPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__signup_signup__ = __webpack_require__(340);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__home_home__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_angularfire2_auth__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_angularfire2_database__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_google_plus__ = __webpack_require__(324);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_facebook__ = __webpack_require__(325);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_storage__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_firebase__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__providers_usercrud_usercrud__ = __webpack_require__(19);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+
+
+
+
+
+
+var LoginPage = (function () {
+    function LoginPage(navCtrl, navParams, alertCtrl, afDatabase, storage, menu, googlePlus, afAuth, facebook, platform, userProvider, loadCnt) {
+        this.navCtrl = navCtrl;
+        this.navParams = navParams;
+        this.alertCtrl = alertCtrl;
+        this.afDatabase = afDatabase;
+        this.storage = storage;
+        this.menu = menu;
+        this.googlePlus = googlePlus;
+        this.afAuth = afAuth;
+        this.facebook = facebook;
+        this.platform = platform;
+        this.userProvider = userProvider;
+        this.loadCnt = loadCnt;
+        this.user = {};
+    }
+    LoginPage.prototype.ionViewDidLoad = function () {
+        console.log('ionViewDidLoad LoginPage');
+    };
+    LoginPage.prototype.signIn = function (email, password) {
+        var _this = this;
+        try {
+            this.afAuth.auth.signInWithEmailAndPassword(this.email, this.password).then(function (result) {
+                console.log("sign in succeed");
+                console.log(result);
+                _this.afDatabase.database.ref("/users/" + result.uid).on("value", function (snap) {
+                    console.log(snap.val());
+                    _this.user.id = snap.val().id;
+                    _this.user.displayName = snap.val().displayName;
+                    _this.user.imageUrl = snap.val().imageUrl;
+                    _this.user.email = snap.val().email;
+                    console.log(_this.user);
+                    var currentUser = JSON.stringify(_this.user);
+                    _this.storage.set("currentUser", currentUser);
+                });
+            });
+        }
+        catch (error) {
+            alert(error.message);
+        }
+    };
+    LoginPage.prototype.ionViewDidEnter = function () {
+        this.menu.swipeEnable(false);
+    };
+    LoginPage.prototype.ionViewWillLeave = function () {
+        this.menu.swipeEnable(true);
+    };
+    LoginPage.prototype.googlePlusLogin = function () {
+        this.googlePlus.login({
+            'webClientId': '1063646526749-rsvbpaum0o6i1ol001h7gjcs36hqrces.apps.googleusercontent.com',
+            'offline': true
+        }).then(function (res) {
+            console.log("resultat : ");
+            console.log(res);
+            __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth().signInWithCredential(__WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.GoogleAuthProvider.credential(res.idToken))
+                .then(function (success) {
+                console.log("google sign in sucess");
+                console.log(success);
+            }).catch(function (err) {
+                console.log("google error");
+                console.error(err);
+            });
+        });
+    };
+    LoginPage.prototype.facebookLogin = function () {
+        var _this = this;
+        if (this.platform.is("cordova")) {
+            this.facebook.login(['email', 'public_profile']).then(function (result) {
+                console.log("facebook login result : " + result);
+                var facebook1credential = __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.FacebookAuthProvider.credential(result.authResponse.accessToken);
+                __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth().signInWithCredential(facebook1credential).then(function (res) {
+                    console.log("sign in with credntials facebook : ");
+                    console.log(res);
+                    //initialize user
+                    _this.user.email = res.email;
+                    _this.user.id = res.uid;
+                    _this.user.imageUrl = res.photoURL;
+                    _this.user.displayName = res.displayName;
+                    _this.user.connectionType = "fb";
+                    console.log(_this.user);
+                    //adding to database
+                    _this.userProvider.addUser(_this.user);
+                    //adding to global storage to simplify access
+                    var currentUser = JSON.stringify(_this.user);
+                    _this.storage.set("currentUser", currentUser);
+                });
+            });
+        }
+        else {
+            this.afAuth.auth.signInWithPopup(new __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.FacebookAuthProvider()).then(function (res) {
+                console.log(res);
+                //initialize user
+                _this.user.email = res.user.email;
+                _this.user.id = res.user.uid;
+                _this.user.imageUrl = res.user.photoURL;
+                _this.user.displayName = res.user.displayName;
+                console.log(_this.user);
+                //adding to database
+                _this.userProvider.addUser(_this.user);
+                //adding to global storage to simplify access
+                var currentUser = JSON.stringify(_this.user);
+                _this.storage.set("currentUser", currentUser);
+                _this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_3__home_home__["a" /* HomePage */]); // tabsPage is replaced by home page
+            });
+        }
+    };
+    LoginPage.prototype.resetPassword = function (mailAdress) {
+        this.afAuth.auth.sendPasswordResetEmail(mailAdress).then(function () {
+            alert("un email de recuperation a ete envoyer a votre adresse");
+        });
+    };
+    LoginPage.prototype.createAcount = function () {
+        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_2__signup_signup__["a" /* SignupPage */]);
+    };
+    LoginPage.prototype.alertResestPassword = function () {
+        var _this = this;
+        var alert = this.alertCtrl.create({
+            title: 'Entrer votre adresse mail',
+            inputs: [
+                {
+                    name: 'mail',
+                    placeholder: 'utilisateur@mail.com'
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Annuler',
+                    role: 'cancel',
+                    handler: function (data) {
+                        console.log('Cancel clicked');
+                    }
+                },
+                {
+                    text: 'Enoyer mail de renitialisation',
+                    handler: function (data) {
+                        console.log(data.mail);
+                        _this.resetPassword(data.mail);
+                    }
+                }
+            ]
+        });
+        alert.present();
+    };
+    LoginPage = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
+            selector: 'page-login',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/login/login.html"*/'<ion-content class="background">\n  <ion-grid>\n    <ion-row >\n      <ion-col>\n          <ion-img width="100" height="100" src="../../assets/imgs/logo.png"></ion-img>\n      </ion-col>\n    </ion-row>\n    <ion-row >\n        <ion-col>\n          <div class="title-logo">\n            Hanimo\n          </div>\n        </ion-col>\n      </ion-row>\n    <ion-row>\n      <ion-col>\n          <p> Connectez-vous à votre compte </p>\n      </ion-col>\n    </ion-row>\n    <ion-row>\n      <ion-col>\n          <ion-input type="text" placeholder="Votre adresse email" [(ngModel)]="email"></ion-input>\n      </ion-col>\n    </ion-row>\n    <ion-row>\n      <ion-col>\n          <ion-input type="password" placeholder="Votre mot de passe"  [(ngModel)]="password"  ></ion-input>\n          <div class="reverse" > \n          <a (click)="alertResestPassword()"  >  Mot de passe oublié? </a></div>\n      </ion-col>\n    </ion-row>\n    <ion-row >\n        <ion-col>\n            <button class="login-button flat" ion-button block (click)="signIn(email,password)">SE CONNECTER</button>\n        </ion-col>\n    </ion-row>\n    <ion-row>\n        <hr> \n      <ion-col>\n        <p> Me connecter via... </p>\n\n      </ion-col>\n    </ion-row>\n    <ion-row >\n        <ion-col >\n            <button class="google-button flat" ion-button (click)="googlePlusLogin()" >  <ion-icon name="logo-googleplus"></ion-icon>  GOOGLE+</button>\n        </ion-col>\n        <ion-col>\n            <button class="facebook-button flat" ion-button (click)="facebookLogin()" >   <ion-icon name="logo-facebook"></ion-icon>  FACEBOOK</button>\n        </ion-col>\n    </ion-row>\n    <ion-row >\n        <ion-col>\n            <button class="login-button flat" ion-button block (click)="createAcount()" >CREER UN COMPTE</button>\n        </ion-col>\n    </ion-row>\n  </ion-grid>\n</ion-content>\n<!-- \n\n<ion-row>\n<ion-col >\n  <ion-item>\n    <ion-avatar class="center" >\n      <img src="assets/imgs/HanimoLogo.jpg">\n    </ion-avatar>\n    <p class="connecter-vous-text"> Connectez Vous</p>\n  </ion-item>\n    </ion-col>\n</ion-row>\n<ion-row>\n<ion-col>\n      <ion-item>\n        <ion-label floating>Adresse Email</ion-label>\n        <ion-input type="email" [(ngModel)]="email" flex ></ion-input>\n      </ion-item>\n      <ion-item>\n        <ion-label floating>Mot de passe</ion-label>\n        <ion-input type="password" [(ngModel)]="password" ></ion-input>\n      </ion-item>\n</ion-col>\n</ion-row>\n<ion-row>\n<ion-col>\n      <ion-item (click)="alertResestPassword()" >\n          <div class="reverse">\n             <a>mot de passe oublié?</a></div>\n      \n      </ion-item>\n</ion-col>\n</ion-row>\n<ion-row>\n<ion-col class="connecter" >      \n      <button class="login-button" (click)="signIn(email,password)" ion-button color="danger" round outline>Se Connecter</button>\n      <hr>  \n      <p >Ou connecter vous via</p>\n      \n</ion-col>\n</ion-row>   \n<ion-row justify-content-star>\n<ion-col > \n      <button class="facebook-button" (click)="facebookLogin()" ion-button color="Primary" outline icon-left>\n        <ion-icon name="logo-facebook"></ion-icon>\n        <div>Facebook</div>\n      </button>\n</ion-col>\n<ion-col >\n      <button class="google-button" (click)="googlePlusLogin()" ion-button color="danger" outline  icon-left>\n        <ion-icon name="logo-google"></ion-icon>\n        <div>Google+</div>\n      </button>\n</ion-col>\n</ion-row>\n<ion-row>\n<ion-col> \n      <!-- <b> Ou </b> -->\n      <!-- <button (click)="createAcount()" block ion-button color="secondary"  icon-left>\n       \n        <div>Creer votre compte</div>\n      </button> \n</ion-col>\n</ion-row> --> '/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/login/login.html"*/,
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+            __WEBPACK_IMPORTED_MODULE_5_angularfire2_database__["a" /* AngularFireDatabase */],
+            __WEBPACK_IMPORTED_MODULE_8__ionic_storage__["b" /* Storage */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* MenuController */],
+            __WEBPACK_IMPORTED_MODULE_6__ionic_native_google_plus__["a" /* GooglePlus */],
+            __WEBPACK_IMPORTED_MODULE_4_angularfire2_auth__["a" /* AngularFireAuth */],
+            __WEBPACK_IMPORTED_MODULE_7__ionic_native_facebook__["a" /* Facebook */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* Platform */],
+            __WEBPACK_IMPORTED_MODULE_10__providers_usercrud_usercrud__["a" /* UsercrudProvider */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */]])
+    ], LoginPage);
+    return LoginPage;
+}());
+
+//# sourceMappingURL=login.js.map
+
+/***/ }),
+
+/***/ 166:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OtherprofilePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
@@ -310,7 +513,7 @@ var OtherprofilePage = (function () {
     };
     OtherprofilePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-otherprofile',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/otherprofile/otherprofile.html"*/'<!--\n  Generated template for the OtherprofilePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n  <ion-navbar>\n      <ion-buttons start>\n          <button ion-button (click)="goBack()">\n              <ion-icon name="md-arrow-back"></ion-icon>\n          </button>\n      </ion-buttons>\n    <ion-title>{{user.displayName}}</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n    <img id="profile-image" src="{{user.imageUrl}}">\n    <ion-item>\n        <!-- amis -->\n      <button item-start *ngIf="relationStatus == 1" ion-button >Amis</button>\n      <button item-start (click)="supprimerAmis()" *ngIf="relationStatus == 1" ion-button >Supprimer</button>\n      \n      <!-- envoyer invitation -->\n      <button item-start (click)="sendInvitation()" *ngIf="relationStatus == 0" ion-button >Envoyer une invitation</button>\n\n      <!-- invitation envoyee -->\n      <button item-start (click)="annulerInvitation()" *ngIf="relationStatus == 2" ion-button >Invitation envoyée</button>\n      \n      <!-- accepter ou decliner invitation -->\n      <button item-start (click)="accepterInvitation()" *ngIf="relationStatus == 3" ion-button >Accrepter l invitation</button>\n      <button item-start (click)="declinerInvitation()" *ngIf="relationStatus == 3" ion-button >decliner l invitation</button>\n\n      <!-- a propos -->\n      <button item-end ion-button >A propos</button>\n    </ion-item>\n    \n\n    <ion-list *ngIf="publications && relationStatus == 1" >\n        <ion-card *ngFor="let pub of publications" >\n\n            <ion-item>\n                <ion-avatar item-start>\n                  <img src="{{user.imageUrl}}">\n                </ion-avatar>\n                <ion-card-header *ngIf="pub.order == \'sharingannonce\'; else templateName" >\n                    <p>{{user.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>\n                </ion-card-header>\n                <p>{{pub.time}}</p>\n              </ion-item>\n\n            <ng-template #templateName>\n                {{user.displayName}} a partagé une {{pub.order}}\n            </ng-template>\n\n            <ion-row>\n                <ion-slides zoom="true" pager>\n                    <ion-slide *ngFor="let img of pub.imagesUrl">\n                        <img style="width: 359px; height: 300px;" src="{{img}}" imageViewer>\n                    </ion-slide>\n                </ion-slides>\n            </ion-row>\n\n            <ion-card-content>\n                <p *ngIf="pub.order == \'annonce\'" >{{pub.descAnnonce}}</p>\n                <p *ngIf="pub.order == \'publication\'" >{{pub.content}}</p>\n            </ion-card-content>\n\n            <ion-row>\n                <!-- *ngIf="!isLiked(pub)"  -->\n                <ion-col *ngIf="!pub.liked" >\n                    <button (click)="likePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart-outline"></ion-icon>\n                    <div>J\'aime</div>\n                    </button>\n                </ion-col>\n            \n                <!--   *ngIf="isLiked(pub)"  -->\n                <ion-col *ngIf="pub.liked" >\n                    <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart"></ion-icon>\n                    <div>J\'aime pas</div>\n                    </button>\n                </ion-col>\n            \n                <ion-col>\n                    <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                    <ion-icon name="text"></ion-icon>\n                    <div>Commentaires</div>\n                    </button>\n                </ion-col>\n            \n            </ion-row>\n            \n                <ion-item>\n                    <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n                    <button ion-button (click)="commenter(pub)" item-end>COM</button>\n                </ion-item>\n\n        </ion-card>\n    </ion-list>\n\n\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/otherprofile/otherprofile.html"*/,
+            selector: 'page-otherprofile',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/otherprofile/otherprofile.html"*/'<!--\n  Generated template for the OtherprofilePage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n    <ion-toolbar class="toolbar-background ">\n        <button ion-button menuToggle>\n            <ion-icon name="menu"></ion-icon>\n        </button>\n        <ion-buttons end>\n            <button ion-button icon-only  >\n                <ion-icon name="md-alert"></ion-icon>\n            </button>\n        </ion-buttons>\n    </ion-toolbar> \n    <!-- <ion-title>{{user.displayName}}</ion-title> -->\n</ion-header>\n\n\n<ion-content padding>\n    <ion-card >\n        <ion-list >\n            <ion-item class="withAvatar"></ion-item>\n                    <ion-item class="transparant">\n                    <ion-avatar item-start>\n                        <img id="profile-image" src="{{user.imageUrl}}">\n                    </ion-avatar>\n                </ion-item>\n                <ion-item class="parttransparant">\n                    <p >{{user.displayName}}</p>      \n                    <h5>Animal lover <ion-badge item-end> \n                        <ion-icon name="md-star" color="light"></ion-icon>\n                        20</ion-badge>\n                    </h5>\n                </ion-item>\n                <!-- <ion-segment [(ngModel)]="userLog">\n                    <ion-segment-button value="monActivite">\n                        ACTIVITE\n                    </ion-segment-button>\n                </ion-segment> -->\n        </ion-list>\n    </ion-card>\n\n</ion-content>\n\n\n\n    <!-- <img id="profile-image" src="{{user.imageUrl}}"> -->\n    <!-- <ion-item>\n        amis\n      <button item-start *ngIf="relationStatus == 1" ion-button >Amis</button>\n      <button item-start (click)="supprimerAmis()" *ngIf="relationStatus == 1" ion-button >Supprimer</button>\n      \n      envoyer invitation\n      <button item-start (click)="sendInvitation()" *ngIf="relationStatus == 0" ion-button >Envoyer une invitation</button>\n\n      invitation envoyee\n      <button item-start (click)="annulerInvitation()" *ngIf="relationStatus == 2" ion-button >Invitation envoyée</button>\n      \n      accepter ou decliner invitation\n      <button item-start (click)="accepterInvitation()" *ngIf="relationStatus == 3" ion-button >Accrepter l invitation</button>\n      <button item-start (click)="declinerInvitation()" *ngIf="relationStatus == 3" ion-button >decliner l invitation</button>\n\n      a propos\n      <button item-end ion-button >A propos</button>\n    </ion-item> -->\n    \n<!-- \n    <ion-list *ngIf="publications && relationStatus == 1" >\n        <ion-card *ngFor="let pub of publications" >\n\n            <ion-item>\n                <ion-avatar item-start>\n                  <img src="{{user.imageUrl}}">\n                </ion-avatar>\n                <ion-card-header *ngIf="pub.order == \'sharingannonce\'; else templateName" >\n                    <p>{{user.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>\n                </ion-card-header>\n                <p>{{pub.time}}</p>\n              </ion-item>\n\n            <ng-template #templateName>\n                {{user.displayName}} a partagé une {{pub.order}}\n            </ng-template>\n\n            <ion-row>\n                <ion-slides zoom="true" pager>\n                    <ion-slide *ngFor="let img of pub.imagesUrl">\n                        <img style="width: 359px; height: 300px;" src="{{img}}" imageViewer>\n                    </ion-slide>\n                </ion-slides>\n            </ion-row>\n\n            <ion-card-content>\n                <p *ngIf="pub.order == \'annonce\'" >{{pub.descAnnonce}}</p>\n                <p *ngIf="pub.order == \'publication\'" >{{pub.content}}</p>\n            </ion-card-content>\n\n            <ion-row> -->\n                <!-- *ngIf="!isLiked(pub)"  -->\n                <!-- <ion-col *ngIf="!pub.liked" >\n                    <button (click)="likePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart-outline"></ion-icon>\n                    <div>J\'aime</div>\n                    </button>\n                </ion-col> -->\n            \n                <!--   *ngIf="isLiked(pub)"  -->\n                <!-- <ion-col *ngIf="pub.liked" >\n                    <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart"></ion-icon>\n                    <div>J\'aime pas</div>\n                    </button>\n                </ion-col>\n            \n                <ion-col>\n                    <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                    <ion-icon name="text"></ion-icon>\n                    <div>Commentaires</div>\n                    </button>\n                </ion-col>\n            \n            </ion-row>\n            \n                <ion-item>\n                    <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n                    <button ion-button (click)="commenter(pub)" item-end>COM</button>\n                </ion-item>\n\n        </ion-card>\n    </ion-list> -->\n\n\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/otherprofile/otherprofile.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["o" /* ViewController */],
@@ -326,7 +529,7 @@ var OtherprofilePage = (function () {
 
 /***/ }),
 
-/***/ 166:
+/***/ 167:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -458,7 +661,7 @@ var PubsProvider = (function () {
 
 /***/ }),
 
-/***/ 167:
+/***/ 168:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -630,7 +833,7 @@ var AnnonceA0Page = (function () {
     };
     AnnonceA0Page = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-annonce-a0',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a0/annonce-a0.html"*/'<ion-header>\n    <ion-navbar color="sandy-brown">\n      <ion-title>Animal En Danger</ion-title>\n    </ion-navbar>\n  </ion-header>\n\n  <ion-content>\n\n    <ion-card>\n\n      <ion-card-header>\n        <div class="category cat-work">Danger</div>\n      </ion-card-header>\n      <b></b>\n\n      <ion-card-content>\n\n      <ion-grid>\n          <ion-row>\n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n          </ion-row>\n\n          <ion-row>\n            <ion-col col-lg-2>\n              <ion-item >\n                  <ion-label floating >Votre description</ion-label>\n                  <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text" rows="4" cols="50"> </ion-textarea>\n                </ion-item>\n              </ion-col>\n              <ion-col col-3>\n                <button ion-button clear class="button-md-marker">\n                  <ion-icon name="md-locate" color="sos" class="ion-md-locate-marker"></ion-icon>\n                  <br><br>\n                </button>\n                {{locationString}}\n              </ion-col>\n          </ion-row>\n\n          <ion-row>\n            <ion-item>\n              <button ion-button  (click)="capture(1)" color="sandy-brown">\n                <ion-icon name="ios-camera"> Camera !</ion-icon>\n              </button>\n              <!-- <img [src]="captureDataUrl[0]" *ngIf="captureDataUrl[0]" /> -->\n              <button ion-button (click)="capture(0)" color="sandy-brown">\n                <ion-icon name="ios-image">Gallerie !</ion-icon>\n              </button>\n\n              <ion-row *ngIf="captureDataUrl">\n                  <ion-slides zoom="true" pager>\n                    <ion-slide *ngFor="let img of captureDataUrl">\n                      <img src="{{img}}">\n                    </ion-slide>\n                  </ion-slides>\n              </ion-row>\n            </ion-item>\n          </ion-row>\n\n          <ion-row>\n            <ion-item>\n              <button (click)="publierAnnonce(annonce)" ion-button  color="sos">Publier</button>\n            </ion-item>\n          </ion-row>\n          \n        </ion-grid>\n\n      </ion-card-content>\n\n    </ion-card>\n\n  </ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a0/annonce-a0.html"*/,
+            selector: 'page-annonce-a0',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/annonce-a0/annonce-a0.html"*/'<ion-header>\n    <ion-navbar color="sandy-brown">\n      <ion-title>Animal En Danger</ion-title>\n    </ion-navbar>\n  </ion-header>\n\n  <ion-content>\n\n    <ion-card>\n\n      <ion-card-header>\n        <div class="category cat-work">Danger</div>\n      </ion-card-header>\n      <b></b>\n\n      <ion-card-content>\n\n      <ion-grid>\n          <ion-row>\n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n          </ion-row>\n\n          <ion-row>\n            <ion-col col-lg-2>\n              <ion-item >\n                  <ion-label floating >Votre description</ion-label>\n                  <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text" rows="4" cols="50"> </ion-textarea>\n                </ion-item>\n              </ion-col>\n              <ion-col col-3>\n                <button ion-button clear class="button-md-marker">\n                  <ion-icon name="md-locate" color="sos" class="ion-md-locate-marker"></ion-icon>\n                  <br><br>\n                </button>\n                {{locationString}}\n              </ion-col>\n          </ion-row>\n\n          <ion-row>\n            <ion-item>\n              <button ion-button  (click)="capture(1)" color="sandy-brown">\n                <ion-icon name="ios-camera"> Camera !</ion-icon>\n              </button>\n              <!-- <img [src]="captureDataUrl[0]" *ngIf="captureDataUrl[0]" /> -->\n              <button ion-button (click)="capture(0)" color="sandy-brown">\n                <ion-icon name="ios-image">Gallerie !</ion-icon>\n              </button>\n\n              <ion-row *ngIf="captureDataUrl">\n                  <ion-slides zoom="true" pager>\n                    <ion-slide *ngFor="let img of captureDataUrl">\n                      <img src="{{img}}">\n                    </ion-slide>\n                  </ion-slides>\n              </ion-row>\n            </ion-item>\n          </ion-row>\n\n          <ion-row>\n            <ion-item>\n              <button (click)="publierAnnonce(annonce)" ion-button  color="sos">Publier</button>\n            </ion-item>\n          </ion-row>\n          \n        </ion-grid>\n\n      </ion-card-content>\n\n    </ion-card>\n\n  </ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/annonce-a0/annonce-a0.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["n" /* ToastController */],
@@ -650,7 +853,7 @@ var AnnonceA0Page = (function () {
 
 /***/ }),
 
-/***/ 168:
+/***/ 169:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -822,7 +1025,7 @@ var AnnonceA3Page = (function () {
     };
     AnnonceA3Page = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-annonce-a3',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a3/annonce-a3.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA3</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <ion-slides *ngIf="captureDataUrl[0]" class="image-slider" loop="true" slidesPerView="2">\n                <ion-slide *ngFor="let img of captureDataUrl">\n                  <img [src]="img" class="thumb-img" imageViewer/>\n                </ion-slide>\n              </ion-slides>\n\n              <button ion-button (click)="capture(0)">pickImage</button>\n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a3/annonce-a3.html"*/,
+            selector: 'page-annonce-a3',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/annonce-a3/annonce-a3.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA3</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <ion-slides *ngIf="captureDataUrl[0]" class="image-slider" loop="true" slidesPerView="2">\n                <ion-slide *ngFor="let img of captureDataUrl">\n                  <img [src]="img" class="thumb-img" imageViewer/>\n                </ion-slide>\n              </ion-slides>\n\n              <button ion-button (click)="capture(0)">pickImage</button>\n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/annonce-a3/annonce-a3.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["n" /* ToastController */],
@@ -842,7 +1045,7 @@ var AnnonceA3Page = (function () {
 
 /***/ }),
 
-/***/ 169:
+/***/ 170:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1014,7 +1217,7 @@ var AnnonceA2Page = (function () {
     };
     AnnonceA2Page = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-annonce-a2',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a2/annonce-a2.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA2</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <ion-slides *ngIf="captureDataUrl[0]" class="image-slider" loop="true" slidesPerView="2">\n                <ion-slide *ngFor="let img of captureDataUrl">\n                  <img [src]="img" class="thumb-img" imageViewer/>\n                </ion-slide>\n              </ion-slides>\n\n              <button ion-button (click)="capture(0)">pickImage</button>\n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a2/annonce-a2.html"*/,
+            selector: 'page-annonce-a2',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/annonce-a2/annonce-a2.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA2</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <ion-slides *ngIf="captureDataUrl[0]" class="image-slider" loop="true" slidesPerView="2">\n                <ion-slide *ngFor="let img of captureDataUrl">\n                  <img [src]="img" class="thumb-img" imageViewer/>\n                </ion-slide>\n              </ion-slides>\n\n              <button ion-button (click)="capture(0)">pickImage</button>\n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/annonce-a2/annonce-a2.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["n" /* ToastController */],
@@ -1034,7 +1237,7 @@ var AnnonceA2Page = (function () {
 
 /***/ }),
 
-/***/ 170:
+/***/ 171:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1206,7 +1409,7 @@ var AnnonceA1Page = (function () {
     };
     AnnonceA1Page = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-annonce-a1',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a1/annonce-a1.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA1</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <button ion-button (click)="capture(0)">gallerie</button>\n\n              <ion-row *ngIf="captureDataUrl">\n                <ion-slides zoom="true" pager>\n                  <ion-slide *ngFor="let img of captureDataUrl">\n                    <img src="{{img}}">\n                  </ion-slide>\n                </ion-slides>\n            </ion-row>\n            \n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/annonce-a1/annonce-a1.html"*/,
+            selector: 'page-annonce-a1',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/annonce-a1/annonce-a1.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>annonceA1</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n  <ion-card>\n    <ion-card-content>\n        <ion-list no-lines>\n            <ion-list-header> Poster votre annonce </ion-list-header> \n            <ion-item>\n              <ion-label floating >Titre de l\'annonce</ion-label>\n              <ion-input [(ngModel)]="annonce.titleAnnonce" type="text"> </ion-input>\n            </ion-item> \n            <ion-item>\n              <ion-label floating >Votre description</ion-label>\n              <ion-textarea [(ngModel)]="annonce.descAnnonce" type="text"> </ion-textarea>\n            </ion-item>\n              \n            <ion-item>\n              <button ion-button (click)="capture(1)">Lets take a picture!</button>\n\n              <button ion-button (click)="capture(0)">gallerie</button>\n\n              <ion-row *ngIf="captureDataUrl">\n                <ion-slides zoom="true" pager>\n                  <ion-slide *ngFor="let img of captureDataUrl">\n                    <img src="{{img}}">\n                  </ion-slide>\n                </ion-slides>\n            </ion-row>\n            \n          </ion-item>\n  \n            <ion-item>\n                <button (click)="publierAnnonce(annonce)" ion-button round>Publier</button>\n            </ion-item>\n          </ion-list>\n    </ion-card-content>\n  </ion-card>\n  </ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/annonce-a1/annonce-a1.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["n" /* ToastController */],
@@ -1226,7 +1429,7 @@ var AnnonceA1Page = (function () {
 
 /***/ }),
 
-/***/ 171:
+/***/ 172:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1235,7 +1438,7 @@ var AnnonceA1Page = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angularfire2_auth__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messaging_modal_messaging_modal__ = __webpack_require__(172);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messaging_modal_messaging_modal__ = __webpack_require__(173);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_firebase__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_firebase__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1323,7 +1526,7 @@ var MessagesPage = (function () {
     };
     MessagesPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-messages',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/messages/messages.html"*/'<ion-header>\n  <ion-navbar  color="primary">\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n        </button>\n    <ion-title>Messages</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n\n  <div padding>\n    <ion-segment [(ngModel)]="choix">\n      <ion-segment-button value="messages">\n        Messages\n      </ion-segment-button>\n      <ion-segment-button value="amis">\n        Amis connectés\n      </ion-segment-button>\n    </ion-segment>\n  </div>\n\n  <div [ngSwitch]="choix">\n    <ion-list *ngSwitchCase="\'messages\'">\n\n      <!-- Afficher messages  -->\n\n    <ion-item-sliding>\n          <!-- First User -->\n      <ion-item *ngFor="let message of messageList" (click)="goToMessage(message.userId)" >\n          <ion-thumbnail item-start>\n            <ion-avatar item-start>\n              <img src="{{message.avatar}}">\n            </ion-avatar>\n          </ion-thumbnail>\n            <h2>{{message.displayName}}</h2>\n            <p *ngIf="verifSeenMessage(message) == 1">Vous: {{message.content}}</p>\n            <p *ngIf="verifSeenMessage(message) == 3" >{{message.content}}</p>\n            <p *ngIf="verifSeenMessage(message) == 2" style="font-weight: bold;" >{{message.content}}</p>\n        </ion-item>\n      </ion-item-sliding>\n    </ion-list>\n      \n  \n    <ion-list *ngSwitchCase="\'amis\'">\n\n      <!-- Afficher Liste Amis en ligne -->\n\n      <ion-list>\n          <ion-item>\n            <ion-avatar item-start>\n              <img src="assets/imgs/hanimo-logo.png">\n            </ion-avatar>\n            <h2>Hamza Ben Romdhane</h2>\n          </ion-item>\n        </ion-list>\n\n    </ion-list>\n        \n  </div>\n\n    \n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/messages/messages.html"*/,
+            selector: 'page-messages',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/messages/messages.html"*/'<ion-header>\n  <ion-navbar  color="primary">\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n        </button>\n    <ion-title>Messages</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n\n  <div padding>\n    <ion-segment [(ngModel)]="choix">\n      <ion-segment-button value="messages">\n        Messages\n      </ion-segment-button>\n      <ion-segment-button value="amis">\n        Amis connectés\n      </ion-segment-button>\n    </ion-segment>\n  </div>\n\n  <div [ngSwitch]="choix">\n    <ion-list *ngSwitchCase="\'messages\'">\n\n      <!-- Afficher messages  -->\n\n    <ion-item-sliding>\n          <!-- First User -->\n      <ion-item *ngFor="let message of messageList" (click)="goToMessage(message.userId)" >\n          <ion-thumbnail item-start>\n            <ion-avatar item-start>\n              <img src="{{message.avatar}}">\n            </ion-avatar>\n          </ion-thumbnail>\n            <h2>{{message.displayName}}</h2>\n            <p *ngIf="verifSeenMessage(message) == 1">Vous: {{message.content}}</p>\n            <p *ngIf="verifSeenMessage(message) == 3" >{{message.content}}</p>\n            <p *ngIf="verifSeenMessage(message) == 2" style="font-weight: bold;" >{{message.content}}</p>\n        </ion-item>\n      </ion-item-sliding>\n    </ion-list>\n      \n  \n    <ion-list *ngSwitchCase="\'amis\'">\n\n      <!-- Afficher Liste Amis en ligne -->\n\n      <ion-list>\n          <ion-item>\n            <ion-avatar item-start>\n              <img src="assets/imgs/hanimo-logo.png">\n            </ion-avatar>\n            <h2>Hamza Ben Romdhane</h2>\n          </ion-item>\n        </ion-list>\n\n    </ion-list>\n        \n  </div>\n\n    \n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/messages/messages.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ModalController */],
@@ -1337,7 +1540,7 @@ var MessagesPage = (function () {
 
 /***/ }),
 
-/***/ 172:
+/***/ 173:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1546,7 +1749,7 @@ var MessagingModalPage = (function () {
     ], MessagingModalPage.prototype, "content", void 0);
     MessagingModalPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-messaging-modal',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/messaging-modal/messaging-modal.html"*/'\n<ion-header>\n  <ion-navbar>\n      <ion-buttons start>\n          <button ion-button (click)="goBack()">\n              Retour\n          </button>\n      </ion-buttons>\n      <ion-title> {{friendUser.displayName}}</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n\n  <div id="chatMessages">\n    <div *ngFor="let message of discussion">\n      <div [class]="message.senderId == currentUserId ? \'innerMessage messageRight\' : \'innerMessage messageLeft\'">\n        <div class="username">{{ message.senderId}}</div>\n        <div class="messageContent">{{ message.content }}</div>\n        <div *ngIf="message.attachement"><img style="width: 100px; height: 100px;" src="{{message.attachement}}" > </div>\n      </div>\n    </div>\n  </div>\n\n</ion-content>\n\n<ion-footer>\n  <ion-toolbar>\n    <div id="footer">\n      <div class="elem"><ion-input type="text" [(ngModel)]="message"></ion-input>\n        \n        \n\n      </div>\n      \n      <div class="elem">\n        <button ion-button icon-only (click)="capture(1)">  \n          <ion-icon name="ios-camera-outline"></ion-icon>\n        </button>\n      </div>\n\n      <div class="elem"><button ion-button icon-only (click)="sendMessage()"><ion-icon name="send"></ion-icon> </button></div>\n    </div>\n\n    <ion-thumbnail *ngIf="imageMessage">\n      <img style="width: 100px; height: 100px;" src="{{imageMessage}}">\n    </ion-thumbnail>\n\n  </ion-toolbar>\n</ion-footer>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/messaging-modal/messaging-modal.html"*/,
+            selector: 'page-messaging-modal',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/messaging-modal/messaging-modal.html"*/'\n<ion-header>\n  <ion-navbar>\n      <ion-buttons start>\n          <button ion-button (click)="goBack()">\n              Retour\n          </button>\n      </ion-buttons>\n      <ion-title> {{friendUser.displayName}}</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n\n  <div id="chatMessages">\n    <div *ngFor="let message of discussion">\n      <div [class]="message.senderId == currentUserId ? \'innerMessage messageRight\' : \'innerMessage messageLeft\'">\n        <div class="username">{{ message.senderId}}</div>\n        <div class="messageContent">{{ message.content }}</div>\n        <div *ngIf="message.attachement"><img style="width: 100px; height: 100px;" src="{{message.attachement}}" > </div>\n      </div>\n    </div>\n  </div>\n\n</ion-content>\n\n<ion-footer>\n  <ion-toolbar>\n    <div id="footer">\n      <div class="elem"><ion-input type="text" [(ngModel)]="message"></ion-input>\n        \n        \n\n      </div>\n      \n      <div class="elem">\n        <button ion-button icon-only (click)="capture(1)">  \n          <ion-icon name="ios-camera-outline"></ion-icon>\n        </button>\n      </div>\n\n      <div class="elem"><button ion-button icon-only (click)="sendMessage()"><ion-icon name="send"></ion-icon> </button></div>\n    </div>\n\n    <ion-thumbnail *ngIf="imageMessage">\n      <img style="width: 100px; height: 100px;" src="{{imageMessage}}">\n    </ion-thumbnail>\n\n  </ion-toolbar>\n</ion-footer>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/messaging-modal/messaging-modal.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_5__ionic_native_camera__["a" /* Camera */],
@@ -1561,7 +1764,7 @@ var MessagingModalPage = (function () {
 
 /***/ }),
 
-/***/ 173:
+/***/ 174:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1687,7 +1890,7 @@ var InvitationPage = (function () {
     };
     InvitationPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-invitation',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/invitation/invitation.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n        </button>\n    <ion-title>\n      Invitations\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n    <ion-list *ngIf="users" >\n\n        <ion-item  *ngFor="let user of users">\n          <ion-thumbnail item-start>\n            <img src="{{user.imageUrl}}">\n          </ion-thumbnail>\n          <h2>{{user.displayName}} </h2>\n          <button (click)="acceptInvitation(user.idSender,user.key)" ion-button clear item-end>Accept</button>\n          <button (click)="declineInvitation(user.key)" ion-button clear item-end>Decline</button>\n        </ion-item>\n    \n      </ion-list>\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/invitation/invitation.html"*/,
+            selector: 'page-invitation',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/invitation/invitation.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n        </button>\n    <ion-title>\n      Invitations\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content>\n    <ion-list *ngIf="users" >\n\n        <ion-item  *ngFor="let user of users">\n          <ion-thumbnail item-start>\n            <img src="{{user.imageUrl}}">\n          </ion-thumbnail>\n          <h2>{{user.displayName}} </h2>\n          <button (click)="acceptInvitation(user.idSender,user.key)" ion-button clear item-end>Accept</button>\n          <button (click)="declineInvitation(user.key)" ion-button clear item-end>Decline</button>\n        </ion-item>\n    \n      </ion-list>\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/invitation/invitation.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_6__providers_usercrud_usercrud__["a" /* UsercrudProvider */],
@@ -1702,7 +1905,7 @@ var InvitationPage = (function () {
 
 /***/ }),
 
-/***/ 186:
+/***/ 187:
 /***/ (function(module, exports) {
 
 function webpackEmptyAsyncContext(req) {
@@ -1715,7 +1918,7 @@ function webpackEmptyAsyncContext(req) {
 webpackEmptyAsyncContext.keys = function() { return []; };
 webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
 module.exports = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 186;
+webpackEmptyAsyncContext.id = 187;
 
 /***/ }),
 
@@ -1961,7 +2164,7 @@ var UsercrudProvider = (function () {
 
 /***/ }),
 
-/***/ 228:
+/***/ 229:
 /***/ (function(module, exports) {
 
 function webpackEmptyAsyncContext(req) {
@@ -1974,210 +2177,7 @@ function webpackEmptyAsyncContext(req) {
 webpackEmptyAsyncContext.keys = function() { return []; };
 webpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;
 module.exports = webpackEmptyAsyncContext;
-webpackEmptyAsyncContext.id = 228;
-
-/***/ }),
-
-/***/ 339:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LoginPage; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__signup_signup__ = __webpack_require__(340);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__home_home__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_angularfire2_auth__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_angularfire2_database__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_google_plus__ = __webpack_require__(323);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_facebook__ = __webpack_require__(324);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_storage__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_firebase__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__providers_usercrud_usercrud__ = __webpack_require__(19);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-
-
-
-
-
-
-
-
-var LoginPage = (function () {
-    function LoginPage(navCtrl, navParams, alertCtrl, afDatabase, storage, menu, googlePlus, afAuth, facebook, platform, userProvider, loadCnt) {
-        this.navCtrl = navCtrl;
-        this.navParams = navParams;
-        this.alertCtrl = alertCtrl;
-        this.afDatabase = afDatabase;
-        this.storage = storage;
-        this.menu = menu;
-        this.googlePlus = googlePlus;
-        this.afAuth = afAuth;
-        this.facebook = facebook;
-        this.platform = platform;
-        this.userProvider = userProvider;
-        this.loadCnt = loadCnt;
-        this.user = {};
-    }
-    LoginPage.prototype.ionViewDidLoad = function () {
-        console.log('ionViewDidLoad LoginPage');
-    };
-    LoginPage.prototype.signIn = function (email, password) {
-        var _this = this;
-        try {
-            this.afAuth.auth.signInWithEmailAndPassword(this.email, this.password).then(function (result) {
-                console.log("sign in succeed");
-                console.log(result);
-                _this.afDatabase.database.ref("/users/" + result.uid).on("value", function (snap) {
-                    console.log(snap.val());
-                    _this.user.id = snap.val().id;
-                    _this.user.displayName = snap.val().displayName;
-                    _this.user.imageUrl = snap.val().imageUrl;
-                    _this.user.email = snap.val().email;
-                    console.log(_this.user);
-                    var currentUser = JSON.stringify(_this.user);
-                    _this.storage.set("currentUser", currentUser);
-                });
-            });
-        }
-        catch (error) {
-            alert(error.message);
-        }
-    };
-    LoginPage.prototype.ionViewDidEnter = function () {
-        this.menu.swipeEnable(false);
-    };
-    LoginPage.prototype.ionViewWillLeave = function () {
-        this.menu.swipeEnable(true);
-    };
-    LoginPage.prototype.googlePlusLogin = function () {
-        this.googlePlus.login({
-            'webClientId': '1063646526749-rsvbpaum0o6i1ol001h7gjcs36hqrces.apps.googleusercontent.com',
-            'offline': true
-        }).then(function (res) {
-            console.log("resultat : ");
-            console.log(res);
-            __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth().signInWithCredential(__WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.GoogleAuthProvider.credential(res.idToken))
-                .then(function (success) {
-                console.log("google sign in sucess");
-                console.log(success);
-            }).catch(function (err) {
-                console.log("google error");
-                console.error(err);
-            });
-        });
-    };
-    LoginPage.prototype.facebookLogin = function () {
-        var _this = this;
-        if (this.platform.is("cordova")) {
-            this.facebook.login(['email', 'public_profile']).then(function (result) {
-                console.log("facebook login result : " + result);
-                var facebook1credential = __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.FacebookAuthProvider.credential(result.authResponse.accessToken);
-                __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth().signInWithCredential(facebook1credential).then(function (res) {
-                    console.log("sign in with credntials facebook : ");
-                    console.log(res);
-                    //initialize user
-                    _this.user.email = res.email;
-                    _this.user.id = res.uid;
-                    _this.user.imageUrl = res.photoURL;
-                    _this.user.displayName = res.displayName;
-                    _this.user.connectionType = "fb";
-                    console.log(_this.user);
-                    //adding to database
-                    _this.userProvider.addUser(_this.user);
-                    //adding to global storage to simplify access
-                    var currentUser = JSON.stringify(_this.user);
-                    _this.storage.set("currentUser", currentUser);
-                });
-            });
-        }
-        else {
-            this.afAuth.auth.signInWithPopup(new __WEBPACK_IMPORTED_MODULE_9_firebase___default.a.auth.FacebookAuthProvider()).then(function (res) {
-                console.log(res);
-                //initialize user
-                _this.user.email = res.user.email;
-                _this.user.id = res.user.uid;
-                _this.user.imageUrl = res.user.photoURL;
-                _this.user.displayName = res.user.displayName;
-                console.log(_this.user);
-                //adding to database
-                _this.userProvider.addUser(_this.user);
-                //adding to global storage to simplify access
-                var currentUser = JSON.stringify(_this.user);
-                _this.storage.set("currentUser", currentUser);
-                _this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_3__home_home__["a" /* HomePage */]); // tabsPage is replaced by home page
-            });
-        }
-    };
-    LoginPage.prototype.resetPassword = function (mailAdress) {
-        this.afAuth.auth.sendPasswordResetEmail(mailAdress).then(function () {
-            alert("un email de recuperation a ete envoyer a votre adresse");
-        });
-    };
-    LoginPage.prototype.createAcount = function () {
-        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_2__signup_signup__["a" /* SignupPage */]);
-    };
-    LoginPage.prototype.alertResestPassword = function () {
-        var _this = this;
-        var alert = this.alertCtrl.create({
-            title: 'Entrer votre adresse mail',
-            inputs: [
-                {
-                    name: 'mail',
-                    placeholder: 'utilisateur@mail.com'
-                }
-            ],
-            buttons: [
-                {
-                    text: 'Annuler',
-                    role: 'cancel',
-                    handler: function (data) {
-                        console.log('Cancel clicked');
-                    }
-                },
-                {
-                    text: 'Enoyer mail de renitialisation',
-                    handler: function (data) {
-                        console.log(data.mail);
-                        _this.resetPassword(data.mail);
-                    }
-                }
-            ]
-        });
-        alert.present();
-    };
-    LoginPage = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-login',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/login/login.html"*/'<ion-content class="background">\n  <ion-card>\n    <ion-grid>\n      <ion-row>\n        <ion-col >\n          <ion-item>\n            <ion-avatar class="center" >\n              <img src="assets/imgs/HanimoLogo.jpg">\n            </ion-avatar>\n            <p class="connecter-vous-text"> Connectez Vous</p>\n          </ion-item>\n            </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n              <ion-item>\n                <ion-label floating>Adresse Email</ion-label>\n                <ion-input type="email" [(ngModel)]="email" flex ></ion-input>\n              </ion-item>\n              <ion-item>\n                <ion-label floating>Mot de passe</ion-label>\n                <ion-input type="password" [(ngModel)]="password" ></ion-input>\n              </ion-item>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n              <ion-item (click)="alertResestPassword()" >\n                  <div class="reverse">\n                     <a>mot de passe oublié?</a></div>\n              \n              </ion-item>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col class="connecter" >      \n              <button class="login-button" (click)="signIn(email,password)" ion-button color="danger" round outline>Se Connecter</button>\n              <hr>  \n              <p >Ou connecter vous via</p>\n              \n        </ion-col>\n      </ion-row>   \n      <ion-row justify-content-star>\n        <ion-col > \n              <button class="facebook-button" (click)="facebookLogin()" ion-button color="Primary" outline icon-left>\n                <ion-icon name="logo-facebook"></ion-icon>\n                <div>Facebook</div>\n              </button>\n        </ion-col>\n        <ion-col >\n              <button class="google-button" (click)="googlePlusLogin()" ion-button color="danger" outline  icon-left>\n                <ion-icon name="logo-google"></ion-icon>\n                <div>Google+</div>\n              </button>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col> \n              <!-- <b> Ou </b> -->\n              <button (click)="createAcount()" block ion-button color="secondary"  icon-left>\n               \n                <div>Creer votre compte</div>\n              </button> \n        </ion-col>\n      </ion-row>\n    </ion-grid>\n  </ion-card> \n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/login/login.html"*/,
-        }),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
-            __WEBPACK_IMPORTED_MODULE_5_angularfire2_database__["a" /* AngularFireDatabase */],
-            __WEBPACK_IMPORTED_MODULE_8__ionic_storage__["b" /* Storage */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* MenuController */],
-            __WEBPACK_IMPORTED_MODULE_6__ionic_native_google_plus__["a" /* GooglePlus */],
-            __WEBPACK_IMPORTED_MODULE_4_angularfire2_auth__["a" /* AngularFireAuth */],
-            __WEBPACK_IMPORTED_MODULE_7__ionic_native_facebook__["a" /* Facebook */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* Platform */],
-            __WEBPACK_IMPORTED_MODULE_10__providers_usercrud_usercrud__["a" /* UsercrudProvider */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* LoadingController */]])
-    ], LoginPage);
-    return LoginPage;
-}());
-
-//# sourceMappingURL=login.js.map
+webpackEmptyAsyncContext.id = 229;
 
 /***/ }),
 
@@ -2191,6 +2191,7 @@ var LoginPage = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_usercrud_usercrud__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_first_connection_first_connection__ = __webpack_require__(341);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__login_login__ = __webpack_require__(165);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2235,6 +2236,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+
 
 
 
@@ -2298,9 +2300,12 @@ var SignupPage = (function () {
     SignupPage.prototype.ionViewWillLeave = function () {
         this.menu.swipeEnable(true);
     };
+    SignupPage.prototype.goToLoginPage = function () {
+        this.navCtrl.setRoot(__WEBPACK_IMPORTED_MODULE_5__login_login__["a" /* LoginPage */]);
+    };
     SignupPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-signup',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/signup/signup.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>\n    Creer votre compte\n  </ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content class="background">\n\n        <ion-grid>\n          <ion-row>\n            <ion-col >\n              <ion-item>\n                <ion-avatar class="center" >\n                  <ion-icon name="ios-people"></ion-icon>\n                 <!--  <img src="assets/imgs/edit-profile.png"> -->\n                </ion-avatar>\n              </ion-item>\n                </ion-col>\n          </ion-row>\n          <ion-row>\n            <ion-col>\n                <ion-item>\n                    <ion-label floating>Nom</ion-label>\n                    <ion-input type="text" [(ngModel)]="user.nom" ></ion-input>\n                </ion-item>\n        \n                <ion-item>\n                    <ion-label floating>Prénom</ion-label>\n                    <ion-input type="text" [(ngModel)]="user.prenom" ></ion-input>\n                </ion-item> \n                 <ion-item>\n                  <ion-label floating>Pseudo</ion-label>\n                  <ion-input type="text" [(ngModel)]="user.displayName" ></ion-input>\n                  </ion-item>\n                  <ion-item>\n                      <ion-label floating>Adresse E-mail</ion-label>\n                      <ion-input type="text" [(ngModel)]="user.email" ></ion-input>\n                  </ion-item>\n                  <ion-item>\n                      <ion-label floating>Mot de passe</ion-label>\n                      <ion-input type="password" [(ngModel)]="user.password" ></ion-input>\n                  </ion-item>\n      \n                <ion-item>\n                    <ion-label floating>confirmer le mot de passe</ion-label>\n                    <ion-input type="password" [(ngModel)]="verifPassword" ></ion-input>\n                </ion-item>\n        \n                \n            </ion-col>\n          </ion-row>\n          <ion-row>\n            <ion-col class="connecter" >      \n                  <button class="login-button" ion-button color="sandy-brown"  (click)="register(user)" >S\'inscrire</button>\n                  \n                  \n            </ion-col>\n          </ion-row>\n          </ion-grid>\n  \n  \n  </ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/signup/signup.html"*/,
+            selector: 'page-signup',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/signup/signup.html"*/'<ion-content class="background">\n\n  <ion-content class="background">\n    <ion-grid>\n      <ion-row >\n        <ion-col>\n            <ion-img width="70" height="70" src="../../assets/imgs/logo.png"></ion-img>\n        </ion-col>\n      </ion-row>\n      <ion-row >\n          <ion-col>\n            <div class="title-logo">\n              Hanimo\n            </div>\n          </ion-col>\n        </ion-row>\n      <ion-row>\n        <ion-col>\n            <p> Créez votre compte | <a (click)="goToLoginPage()"> Me Connecter</a></p>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col >\n            <ion-input  type="text" placeholder="Prénom"  [(ngModel)]="user.prenom"></ion-input>\n        </ion-col>\n        <ion-col>\n            <ion-input type="text" placeholder="Nom" [(ngModel)]="user.nom" ></ion-input>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n          <ion-input type="text" placeholder="Pseudo" [(ngModel)]="user.displayName"  ></ion-input>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n          <ion-input type="text" placeholder="Votre email" [(ngModel)]="user.email"  ></ion-input>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n          <ion-input type="password" placeholder="Mot de passe"  [(ngModel)]="user.password"  ></ion-input>\n        </ion-col>\n      </ion-row>\n      <ion-row>\n        <ion-col>\n          <ion-input type="password" placeholder="Confirmation de mot de passe"  [(ngModel)]="verifPassword"  ></ion-input>\n        </ion-col>\n      </ion-row>\n      <ion-row >\n          <ion-col>\n              <button class="login-button flat" ion-button block  (click)="register(user)" >CREER MON COMPTE</button>\n          </ion-col>\n      </ion-row>\n    </ion-grid>\n  </ion-content>\n  </ion-content>\n\n\n<!-- \n  <ion-grid>\n    <ion-row>\n      <ion-col >\n        <ion-item>\n          <ion-avatar class="center" >\n            <ion-icon name="ios-people"></ion-icon>\n            <img src="assets/imgs/edit-profile.png">\n          </ion-avatar>\n        </ion-item>\n          </ion-col>\n    </ion-row>\n    <ion-row>\n      <ion-col>\n          <ion-item>\n              <ion-label floating>Nom</ion-label>\n              <ion-input type="text" ></ion-input>\n          </ion-item>\n  \n          <ion-item>\n              <ion-label floating>Prénom</ion-label>\n              <ion-input type="text" ></ion-input>\n          </ion-item> \n           <ion-item>\n            <ion-label floating>Pseudo</ion-label>\n            <ion-input type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Adresse E-mail</ion-label>\n                <ion-input type="text" ></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Mot de passe</ion-label>\n                <ion-input type="password"></ion-input>\n            </ion-item>\n\n          <ion-item>\n              <ion-label floating>confirmer le mot de passe</ion-label>\n              <ion-input type="password"></ion-input>\n          </ion-item>\n  \n          \n      </ion-col>\n    </ion-row>\n    <ion-row>\n      <ion-col class="connecter" >      \n            <button class="login-button" ion-button color="sandy-brown"  (click)="register(user)" >S\'inscrire</button>\n            \n            \n      </ion-col>\n    </ion-row>\n    </ion-grid> -->\n\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/signup/signup.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
@@ -2372,7 +2377,7 @@ var FirstConnectionPage = (function () {
     };
     FirstConnectionPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-first-connection',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/first-connection/first-connection.html"*/'<ion-content>\n  <ion-card class="card">\n      <img class="avatar" src="assets/imgs/defaultAvatar.png"/>\n      <ion-card-content class="card-content">\n          <ion-card-title>\n              Hamza Ben Romdhane \n          </ion-card-title>\n          <button (click)="goToCompleteProfile()" ion-button color="secondary" block icon-left>\n              Completer vos informations de profil\n          </button>\n          <button (click)="skipToHome()" ion-button color="light">Passer</button>\n      </ion-card-content>\n    </ion-card>\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/first-connection/first-connection.html"*/,
+            selector: 'page-first-connection',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/first-connection/first-connection.html"*/'<ion-content>\n  <ion-card class="card">\n      <img class="avatar" src="assets/imgs/defaultAvatar.png"/>\n      <ion-card-content class="card-content">\n          <ion-card-title>\n              Hamza Ben Romdhane \n          </ion-card-title>\n          <button (click)="goToCompleteProfile()" ion-button color="secondary" block icon-left>\n              Completer vos informations de profil\n          </button>\n          <button (click)="skipToHome()" ion-button color="light">Passer</button>\n      </ion-card-content>\n    </ion-card>\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/first-connection/first-connection.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_2_angularfire2_auth__["a" /* AngularFireAuth */],
@@ -2437,7 +2442,7 @@ var CompleteProfilePage = (function () {
     };
     CompleteProfilePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-complete-profile',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/complete-profile/complete-profile.html"*/'<ion-content>\n  <ion-card class="card">\n\n      <h1 ion-text>Completer les informations de votre profil</h1>\n      <img class="avatar" src="assets/imgs/defaultAvatar.png" />\n      <ion-card-content class="card-content">\n          <ion-card-title>\n              Hamza Ben Romdhane \n          </ion-card-title>\n\n          <ion-list>\n\n              <ion-item>\n                  <ion-label stacked>Numero de telephone</ion-label>\n                  <ion-input type="tel" [(ngModel)]="user.numTel" ></ion-input>\n              </ion-item>\n              <ion-item>\n                  <ion-label stacked>ou habiter vous</ion-label>\n                  <ion-input type="text" [(ngModel)]="user.habiter" ></ion-input>\n              </ion-item>\n              <ion-item>\n                  <ion-label stacked>Date de naissance</ion-label>\n                  <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="user.naissanceDate"></ion-datetime>\n              </ion-item>\n\n              <ion-item>\n                  <ion-label stacked>Sexe</ion-label>\n                  <ion-input type="text" [(ngModel)]="user.sexe" ></ion-input>\n              </ion-item>\n\n              <ion-item>\n                  <button (click)="completeProfile(user)" ion-button block outline>Completer</button>\n              </ion-item>\n          </ion-list>\n\n      </ion-card-content>\n    </ion-card>\n\n\n  \n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/complete-profile/complete-profile.html"*/,
+            selector: 'page-complete-profile',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/complete-profile/complete-profile.html"*/'<ion-content>\n  <ion-card class="card">\n\n      <h1 ion-text>Completer les informations de votre profil</h1>\n      <img class="avatar" src="assets/imgs/defaultAvatar.png" />\n      <ion-card-content class="card-content">\n          <ion-card-title>\n              Hamza Ben Romdhane \n          </ion-card-title>\n\n          <ion-list>\n\n              <ion-item>\n                  <ion-label stacked>Numero de telephone</ion-label>\n                  <ion-input type="tel" [(ngModel)]="user.numTel" ></ion-input>\n              </ion-item>\n              <ion-item>\n                  <ion-label stacked>ou habiter vous</ion-label>\n                  <ion-input type="text" [(ngModel)]="user.habiter" ></ion-input>\n              </ion-item>\n              <ion-item>\n                  <ion-label stacked>Date de naissance</ion-label>\n                  <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="user.naissanceDate"></ion-datetime>\n              </ion-item>\n\n              <ion-item>\n                  <ion-label stacked>Sexe</ion-label>\n                  <ion-input type="text" [(ngModel)]="user.sexe" ></ion-input>\n              </ion-item>\n\n              <ion-item>\n                  <button (click)="completeProfile(user)" ion-button block outline>Completer</button>\n              </ion-item>\n          </ion-list>\n\n      </ion-card-content>\n    </ion-card>\n\n\n  \n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/complete-profile/complete-profile.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
@@ -2459,9 +2464,9 @@ var CompleteProfilePage = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__home_home__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__messages_messages__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__messages_messages__ = __webpack_require__(172);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__poster_poster__ = __webpack_require__(347);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__invitation_invitation__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__invitation_invitation__ = __webpack_require__(174);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_angularfire2_database__ = __webpack_require__(13);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2503,7 +2508,7 @@ var TabsPage = (function () {
     };
     TabsPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-tabs',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/tabs/tabs.html"*/'<!-- <ion-menu [content]="content" >\n  <ion-header  >\n    <ion-toolbar  color="primary" >\n      <ion-title>Menu</ion-title>\n    </ion-toolbar>\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n        \n        <ion-list no-lines>\n                <ion-item>\n                  <ion-avatar item-start>\n                    <img src="./../assets/imgs/avatar.jpg">\n                  </ion-avatar><br>\n                  \n                </ion-item>\n                <ion-item>\n                    <h2> Username</h2>\n                </ion-item>\n          </ion-list>\n       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p.component)">\n        \n        {{p.title}} \n      </button> \n    </ion-list>\n  </ion-content>\n\n</ion-menu> -->\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n\n<ion-tabs>\n  <ion-tab [root]="tab1Root" tabTitle="Accueil" tabIcon="ios-home-outline"></ion-tab>\n<!--   <ion-tab [root]="tab2Root" tabTitle="Messages" tabIcon="ios-chatboxes-outline"></ion-tab> -->\n  <ion-tab [root]="tab3Root" tabTitle="Poster" tabIcon="ios-create-outline"></ion-tab>\n<!--   <ion-tab [root]="tab4Root" tabTitle="Invitation" tabIcon="ios-person-add-outline"></ion-tab> -->\n</ion-tabs>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/tabs/tabs.html"*/,
+            selector: 'page-tabs',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/tabs/tabs.html"*/'<!-- <ion-menu [content]="content" >\n  <ion-header  >\n    <ion-toolbar  color="primary" >\n      <ion-title>Menu</ion-title>\n    </ion-toolbar>\n  </ion-header>\n\n  <ion-content>\n    <ion-list>\n        \n        <ion-list no-lines>\n                <ion-item>\n                  <ion-avatar item-start>\n                    <img src="./../assets/imgs/avatar.jpg">\n                  </ion-avatar><br>\n                  \n                </ion-item>\n                <ion-item>\n                    <h2> Username</h2>\n                </ion-item>\n          </ion-list>\n       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p.component)">\n        \n        {{p.title}} \n      </button> \n    </ion-list>\n  </ion-content>\n\n</ion-menu> -->\n\n<!-- Disable swipe-to-go-back because it\'s poor UX to combine STGB with side menus -->\n<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n\n<ion-tabs>\n  <ion-tab [root]="tab1Root" tabTitle="Accueil" tabIcon="ios-home-outline"></ion-tab>\n<!--   <ion-tab [root]="tab2Root" tabTitle="Messages" tabIcon="ios-chatboxes-outline"></ion-tab> -->\n  <ion-tab [root]="tab3Root" tabTitle="Poster" tabIcon="ios-create-outline"></ion-tab>\n<!--   <ion-tab [root]="tab4Root" tabTitle="Invitation" tabIcon="ios-person-add-outline"></ion-tab> -->\n</ion-tabs>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/tabs/tabs.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_6_angularfire2_database__["a" /* AngularFireDatabase */]])
@@ -2524,7 +2529,7 @@ var TabsPage = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_storage__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_usercrud_usercrud__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__otherprofile_otherprofile__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__otherprofile_otherprofile__ = __webpack_require__(166);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_firebase_app__ = __webpack_require__(89);
@@ -2681,7 +2686,7 @@ var SearchPage = (function () {
     };
     SearchPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-search',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/search/search.html"*/'<ion-header>\n\n  <ion-toolbar>\n      <ion-searchbar (ionInput)="getUsers($event)"></ion-searchbar>\n    </ion-toolbar> \n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-list>\n    <ion-item *ngFor="let user of list">\n      <ion-avatar item-start (click)="goToUserProfile(user)">\n        <img src="{{user.imageUrl}}">\n      </ion-avatar>\n      <h2>{{user.displayName}}</h2>\n      <button ion-button (click)="sendMessage(user.id)" >Message</button>\n\n      <button *ngIf="user.state == 0" ion-button (click)="sendInvitation(user)" item-end >\n        ajouter\n      </button>\n\n      <button *ngIf="user.state == 2" ion-button (click)="cancelInvitation(user)" item-end >\n        annuler invit\n      </button>\n\n      <button *ngIf="user.state == 3" ion-button (click)="verifInvitation(user)" item-end >\n        accepter invit\n      </button>\n\n      <button *ngIf="user.state == 1" ion-button (click)="verifInvitation(user)" item-end >\n        deja amis\n      </button>\n\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/search/search.html"*/,
+            selector: 'page-search',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/search/search.html"*/'<ion-header>\n\n  <ion-toolbar>\n      <ion-searchbar (ionInput)="getUsers($event)"></ion-searchbar>\n    </ion-toolbar> \n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-list>\n    <ion-item *ngFor="let user of list">\n      <ion-avatar item-start (click)="goToUserProfile(user)">\n        <img src="{{user.imageUrl}}">\n      </ion-avatar>\n      <h2>{{user.displayName}}</h2>\n      <button ion-button (click)="sendMessage(user.id)" >Message</button>\n\n      <button *ngIf="user.state == 0" ion-button (click)="sendInvitation(user)" item-end >\n        ajouter\n      </button>\n\n      <button *ngIf="user.state == 2" ion-button (click)="cancelInvitation(user)" item-end >\n        annuler invit\n      </button>\n\n      <button *ngIf="user.state == 3" ion-button (click)="verifInvitation(user)" item-end >\n        accepter invit\n      </button>\n\n      <button *ngIf="user.state == 1" ion-button (click)="verifInvitation(user)" item-end >\n        deja amis\n      </button>\n\n    </ion-item>\n  </ion-list>\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/search/search.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* ModalController */],
@@ -2704,7 +2709,7 @@ var SearchPage = (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConseilModalPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_pubs_pubs__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_pubs_pubs__ = __webpack_require__(167);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2741,7 +2746,7 @@ var ConseilModalPage = (function () {
     };
     ConseilModalPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-conseil-modal',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/conseil-modal/conseil-modal.html"*/'\n<ion-header>\n\n  <ion-navbar>\n    <ion-title left>conseilModal</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>\n\n      <ion-input [(ngModel)]="conseil.content" type="text" rows="4" cols="50" placeholder="Votre conseil ...">\n      </ion-input>\n      \n    </ion-item>\n\n    <ion-item>\n\n      <button ion-button (click)="addConseil(conseil.content)" block>\n          Publiez Votre conseil\n      </button>\n\n    </ion-item>\n\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/conseil-modal/conseil-modal.html"*/,
+            selector: 'page-conseil-modal',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/conseil-modal/conseil-modal.html"*/'\n<ion-header>\n\n  <ion-navbar>\n    <ion-title left>conseilModal</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-list>\n    <ion-item>\n\n      <ion-input [(ngModel)]="conseil.content" type="text" rows="4" cols="50" placeholder="Votre conseil ...">\n      </ion-input>\n      \n    </ion-item>\n\n    <ion-item>\n\n      <button ion-button (click)="addConseil(conseil.content)" block>\n          Publiez Votre conseil\n      </button>\n\n    </ion-item>\n\n  </ion-list>\n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/conseil-modal/conseil-modal.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["o" /* ViewController */],
@@ -2763,11 +2768,11 @@ var ConseilModalPage = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_camera__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angularfire2_database__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_pubs_pubs__ = __webpack_require__(166);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_media_capture__ = __webpack_require__(326);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_pubs_pubs__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_media_capture__ = __webpack_require__(327);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_storage__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_media__ = __webpack_require__(327);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_file__ = __webpack_require__(328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_media__ = __webpack_require__(328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_file__ = __webpack_require__(329);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_firebase__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -2910,7 +2915,7 @@ var PublicationModalPage = (function () {
     };
     PublicationModalPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-publication-modal',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/publication-modal/publication-modal.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>publicationModal</ion-title>    \n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-item>\n    <ion-input [(ngModel)]="content" placeholder="Exprimer Vous" clearInput></ion-input>\n  </ion-item>\n\n  <ion-row *ngIf="captureDataUrl">\n    <ion-slides zoom="true" pager>\n      <ion-slide *ngFor="let img of captureDataUrl">\n        <img src="{{img}}">\n      </ion-slide>\n    </ion-slides>\n  </ion-row>\n\n  <button ion-button block (click)="publier()">publier</button>\n</ion-content>\n\n<ion-footer>\n    <ion-toolbar>\n      <ion-title (click)="openAction()" >Enrichisser votre publication</ion-title>\n    </ion-toolbar>\n</ion-footer>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/publication-modal/publication-modal.html"*/,
+            selector: 'page-publication-modal',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/publication-modal/publication-modal.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>publicationModal</ion-title>    \n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  <ion-item>\n    <ion-input [(ngModel)]="content" placeholder="Exprimer Vous" clearInput></ion-input>\n  </ion-item>\n\n  <ion-row *ngIf="captureDataUrl">\n    <ion-slides zoom="true" pager>\n      <ion-slide *ngFor="let img of captureDataUrl">\n        <img src="{{img}}">\n      </ion-slide>\n    </ion-slides>\n  </ion-row>\n\n  <button ion-button block (click)="publier()">publier</button>\n</ion-content>\n\n<ion-footer>\n    <ion-toolbar>\n      <ion-title (click)="openAction()" >Enrichisser votre publication</ion-title>\n    </ion-toolbar>\n</ion-footer>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/publication-modal/publication-modal.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_2__ionic_native_camera__["a" /* Camera */],
@@ -2937,10 +2942,10 @@ var PublicationModalPage = (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PosterPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__annonce_a0_annonce_a0__ = __webpack_require__(167);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__annonce_a3_annonce_a3__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__annonce_a2_annonce_a2__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__annonce_a1_annonce_a1__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__annonce_a0_annonce_a0__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__annonce_a3_annonce_a3__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__annonce_a2_annonce_a2__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__annonce_a1_annonce_a1__ = __webpack_require__(171);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_diagnostic__ = __webpack_require__(52);
@@ -3082,7 +3087,7 @@ var PosterPage = (function () {
     };
     PosterPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-poster',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/poster/poster.html"*/'<ion-header>\n    <ion-navbar>\n          <button ion-button icon-only menuToggle  >\n            <ion-icon name="menu"></ion-icon>\n          </button>\n          <ion-title> Poster une annonce</ion-title>\n    </ion-navbar> \n  </ion-header>\n\n<ion-content>\n\n    <ion-card class="aide" (click)="goToA3()" color="#C3CCB2" >\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Besoin d\'aide</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card class="foyer" (click)="goToA2()" color="#4D898F">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Cherchant un foyer</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card *ngIf="reputation > 29" class="blessure" (click)="goToA1()" color="#BF983E">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Blessure ou Maladie</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card *ngIf="reputation > 29" class="danger" (click)="goToA0()" color="#9B5337">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >En Danger</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid> \n    </ion-card>\n\n\n    <ion-card class="autre" (click)="goToAutre()" color="#333537">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Autre</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n  <!--<button ion-button (click)="getImage()">getImage</button>-->\n\n\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/poster/poster.html"*/,
+            selector: 'page-poster',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/poster/poster.html"*/'<ion-header>\n    <ion-navbar>\n          <button ion-button icon-only menuToggle  >\n            <ion-icon name="menu"></ion-icon>\n          </button>\n          <ion-title> Poster une annonce</ion-title>\n    </ion-navbar> \n  </ion-header>\n\n<ion-content>\n\n    <ion-card class="aide" (click)="goToA3()" color="#C3CCB2" >\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Besoin d\'aide</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card class="foyer" (click)="goToA2()" color="#4D898F">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Cherchant un foyer</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card *ngIf="reputation > 29" class="blessure" (click)="goToA1()" color="#BF983E">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Blessure ou Maladie</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n\n    <ion-card *ngIf="reputation > 29" class="danger" (click)="goToA0()" color="#9B5337">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >En Danger</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid> \n    </ion-card>\n\n\n    <ion-card class="autre" (click)="goToAutre()" color="#333537">\n        <ion-grid>\n            <ion-row>\n              <ion-col >\n                <ion-label >Autre</ion-label>\n                </ion-col>\n            </ion-row>\n          </ion-grid>\n    </ion-card>\n\n  <!--<button ion-button (click)="getImage()">getImage</button>-->\n\n\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/poster/poster.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
             __WEBPACK_IMPORTED_MODULE_6_angularfire2_auth__["a" /* AngularFireAuth */],
@@ -3413,7 +3418,7 @@ var AnnoncesPage = (function () {
     };
     AnnoncesPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-annonces',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/annonces/annonces.html"*/'\n<ion-header>\n\n  <ion-navbar>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n        </button>\n    <ion-title>annonces</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n<ion-list *ngIf="publications">\n\n  <ion-card *ngFor="let pub of publications" >\n\n    <ion-item>\n      <ion-avatar item-start>\n        <img src="{{pub.avaterUrl}}">\n      </ion-avatar>\n      <h2>{{pub.displayName}}</h2>\n      <p>{{pub.time}}</p>\n\n      <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>\n    </ion-item>\n  \n    <ion-fab class="myFab" right>\n      <button (click)="openMapModal(pub)" ion-fab>\n        <ion-icon name="pin"></ion-icon>\n      </button>\n    </ion-fab>\n\n    <!--> galerie slider -->\n    <ion-row>\n      <ion-slides zoom="true" pager>\n        <ion-slide *ngFor="let img of pub.imagesUrl">\n          <img src="{{img}}">\n        </ion-slide>\n      </ion-slides>\n    </ion-row>\n    \n  \n    <ion-card-content>\n      <p>{{pub.descAnnonce}}</p>\n    </ion-card-content>\n\n    <ion-row>\n      <!-- *ngIf="!isLiked(pub)"  -->\n      <ion-col *ngIf="!pub.liked" >\n        <button (click)="likePub(pub)" ion-button icon-left clear small>\n          <ion-icon name="ios-heart-outline"></ion-icon>\n          <div>J\'aime</div>\n        </button>\n      </ion-col>\n\n    <!--   *ngIf="isLiked(pub)"  -->\n      <ion-col *ngIf="pub.liked" >\n        <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n          <ion-icon name="ios-heart"></ion-icon>\n          <div>J\'aime pas</div>\n        </button>\n      </ion-col>\n\n      <ion-col>\n        <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n          <ion-icon name="text"></ion-icon>\n          <div>Commentaires</div>\n        </button>\n      </ion-col>\n\n      <!-- <ion-col>\n        <button (click)="shareAnnonce(pub)" ion-button icon-left clear small>\n          <ion-icon name="share"></ion-icon>\n          <div>Partage</div>\n        </button>\n      </ion-col> -->\n\n    </ion-row>\n\n    <ion-item>\n      <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n      <button ion-button (click)="commentAnnonce(pub)" item-end>COM</button>\n    </ion-item>\n\n  </ion-card>\n\n</ion-list>\n\n</ion-content>\n  '/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/annonces/annonces.html"*/,
+            selector: 'page-annonces',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/annonces/annonces.html"*/'\n<ion-header>\n\n\n  <ion-toolbar class="toolbar-background ">\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n      <ion-title class="title-logo">Hanimo</ion-title> \n    </ion-toolbar> \n</ion-header>\n\n\n<ion-content padding>\n\n\n<div *ngIf="publications">\n    <ion-card *ngFor="let pub of publications"  >\n        <ion-item>\n          <ion-avatar item-start class="edit" ><img src="{{pub.avaterUrl}}"></ion-avatar>\n          <h3>{{pub.displayName}}</h3>\n          <p>{{pub.time}} </p><ion-badge class="besoin"item-end>Besoin d\'aide</ion-badge>\n        </ion-item>\n        <!--> galerie slider -->\n        <ion-row>\n          \n          <ion-slides zoom="true"  pager>\n            <ion-slide *ngFor="let img of pub.imagesUrl">\n                      <img src="{{img}}">\n                      <button ion-button-outline>\n                          <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab> \n                      </button>\n                    </ion-slide>\n                  </ion-slides>\n          \n        </ion-row>\n        <ion-card-content>\n            <p>{{pub.descAnnonce}}</p>\n            <!-- <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon> -->\n        \n    <ul class="flex-container flex-start">      <li class="flex-item">\n            <!-- <button ion-button icon-left clear > -->\n              <li *ngIf="!pub.liked" >\n                    <button (click)="likePub(pub)" ion-button icon-left clear small>\n                      <ion-icon name="ios-heart-outline"></ion-icon>\n                      <div>J\'aime</div>\n                    </button>\n            \n                    <li *ngIf="pub.liked" >\n                    <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                      <ion-icon name="ios-heart"></ion-icon>\n                      <div>J\'aime pas</div>\n                    </button>\n                  </li>\n\n\n<!-- \n              <div class="like">\n                  <img src="assets/imgs/like.png"></div>  \n            </button>\n          </li> -->\n          <li class="flex-item">\n                <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                  <ion-icon name="text"></ion-icon>\n                  <div>Commentaires</div>\n                </button>\n          </li>\n          <li class="flex-item">\n              <button (click)="shareAnnonce(pub)" ion-button icon-left clear small>\n                  <ion-icon name="share"></ion-icon>\n                  <div>Partage</div>\n                </button>\n          </li>\n        </ul>\n      </ion-card-content>\n    </ion-card>  \n</div>\n    \n  \n\n\n\n\n\n\n\n<!-- \n<ion-list *ngIf="publications">\n\n  <ion-card *ngFor="let pub of publications" >\n\n    <ion-item>\n      <ion-avatar item-start>\n        <img src="{{pub.avaterUrl}}">\n      </ion-avatar>\n      <h2>{{pub.displayName}}</h2>\n      <p>{{pub.time}}</p>\n\n      <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>\n    </ion-item>\n  \n    <ion-fab class="myFab" right>\n      <button (click)="openMapModal(pub)" ion-fab>\n        <ion-icon name="pin"></ion-icon>\n      </button>\n    </ion-fab> -->\n\n    <!--> galerie slider -->\n    <!-- <ion-row>\n      <ion-slides zoom="true" pager>\n        <ion-slide *ngFor="let img of pub.imagesUrl">\n          <img src="{{img}}">\n        </ion-slide>\n      </ion-slides>\n    </ion-row>\n    \n  \n    <ion-card-content>\n      <p>{{pub.descAnnonce}}</p>\n    </ion-card-content>\n\n    <ion-row> -->\n\n        \n      <!-- *ngIf="!isLiked(pub)"  -->\n      <!-- <ion-col *ngIf="!pub.liked" >\n        <button (click)="likePub(pub)" ion-button icon-left clear small>\n          <ion-icon name="ios-heart-outline"></ion-icon>\n          <div>J\'aime</div>\n        </button>\n      </ion-col> -->\n\n    <!--   *ngIf="isLiked(pub)"  -->\n      <!-- <ion-col *ngIf="pub.liked" >\n        <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n          <ion-icon name="ios-heart"></ion-icon>\n          <div>J\'aime pas</div>\n        </button>\n      </ion-col>\n\n      <ion-col>\n        <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n          <ion-icon name="text"></ion-icon>\n          <div>Commentaires</div>\n        </button>\n      </ion-col> -->\n\n      <!-- <ion-col>\n        <button (click)="shareAnnonce(pub)" ion-button icon-left clear small>\n          <ion-icon name="share"></ion-icon>\n          <div>Partage</div>\n        </button>\n      </ion-col> -->\n<!-- \n    </ion-row>\n\n    <ion-item>\n      <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n      <button ion-button (click)="commentAnnonce(pub)" item-end>COM</button>\n    </ion-item>\n\n  </ion-card>\n\n</ion-list> -->\n\n</ion-content>\n  '/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/annonces/annonces.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* ActionSheetController */],
@@ -3535,7 +3540,7 @@ var MapPage = (function () {
     ], MapPage.prototype, "mapElement", void 0);
     MapPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-map',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/map/map.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button full color="danger" (click)="dismiss()">Okay\n        </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <div #map id="map"></div>\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/map/map.html"*/,
+            selector: 'page-map',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/map/map.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button full color="danger" (click)="dismiss()">Okay\n        </button>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <div #map id="map"></div>\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/map/map.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
@@ -3558,8 +3563,8 @@ var MapPage = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_angularfire2_auth__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messaging_modal_messaging_modal__ = __webpack_require__(172);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__otherprofile_otherprofile__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__messaging_modal_messaging_modal__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__otherprofile_otherprofile__ = __webpack_require__(166);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3675,7 +3680,7 @@ var FriendsPage = (function () {
     };
     FriendsPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-friends',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/friends/friends.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n      </button>\n    <ion-title>\n      liste d\'amis\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n    <ion-searchbar placeholder="trouver un ami" (ionInput)="getItems($event)"></ion-searchbar>\n  <ion-list *ngIf="friends" >\n\n      <ion-item *ngFor="let friend of tab" >\n\n        <ion-avatar item-start (click)="goToUserProfile(friend.userId)" >\n          <img src="{{friend.avaterUrl}}">\n        </ion-avatar>\n\n        <h2>{{friend.displayName}}</h2>\n        <button ion-button (click)="message(friend.userId)" item-end>message</button>\n        <button ion-button (click)="deleteFriend(friend.key,friend.index)" item-end>Supprimer</button>\n      </ion-item>\n\n    </ion-list>\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/friends/friends.html"*/,
+            selector: 'page-friends',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/friends/friends.html"*/'<ion-header>\n  <ion-navbar>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n      </button>\n    <ion-title>\n      liste d\'amis\n    </ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n    <ion-searchbar placeholder="trouver un ami" (ionInput)="getItems($event)"></ion-searchbar>\n  <ion-list *ngIf="friends" >\n\n      <ion-item *ngFor="let friend of tab" >\n\n        <ion-avatar item-start (click)="goToUserProfile(friend.userId)" >\n          <img src="{{friend.avaterUrl}}">\n        </ion-avatar>\n\n        <h2>{{friend.displayName}}</h2>\n        <button ion-button (click)="message(friend.userId)" item-end>message</button>\n        <button ion-button (click)="deleteFriend(friend.key,friend.index)" item-end>Supprimer</button>\n      </ion-item>\n\n    </ion-list>\n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/friends/friends.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ModalController */],
@@ -4027,7 +4032,7 @@ var ProfilePage = (function () {
     };
     ProfilePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-profile',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/profile/profile.html"*/'<ion-header>\n      <button ion-button icon-only menuToggle  >\n          <ion-icon name="menu"></ion-icon>\n      </button>\n</ion-header>\n\n\n<ion-content padding>\n    <img (click)="changePicture()" id="profile-image" src="{{currentUser.imageUrl}}">\n    <button ion-button (click)="settings()">Parametere</button>\n\n    <ion-list *ngIf="publications" >\n        <ion-card *ngFor="let pub of publications" >\n\n            <ion-item>\n                <ion-avatar item-start>\n                  <img src="{{currentUser.imageUrl}}">\n                </ion-avatar>\n                <ion-card-header *ngIf="pub.order == \'sharingannonce\'; else templateName" >\n                    <p>{{currentUser.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>\n                </ion-card-header>\n                <p>{{pub.time}}</p>\n\n                <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>\n            </ion-item>\n\n            <ng-template #templateName>\n                {{currentUser.displayName}} a partagé une {{pub.order}}\n            </ng-template>\n\n            <ion-row>\n                <ion-slides zoom="true" pager>\n                    <ion-slide *ngFor="let img of pub.imagesUrl">\n                        <img style="width: 359px; height: 300px;" src="{{img}}">\n                    </ion-slide>\n                </ion-slides>\n            </ion-row>\n\n            <ion-card-content>\n                <p *ngIf="pub.order == \'annonce\'" >{{pub.descAnnonce}}</p>\n                <p *ngIf="pub.order == \'publication\'" >{{pub.content}}</p>\n            </ion-card-content>\n\n            <ion-row>\n                <!-- *ngIf="!isLiked(pub)"  -->\n                <ion-col *ngIf="!pub.liked" >\n                    <button (click)="likePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart-outline"></ion-icon>\n                    <div>J\'aime</div>\n                    </button>\n                </ion-col>\n            \n                <!--   *ngIf="isLiked(pub)"  -->\n                <ion-col *ngIf="pub.liked" >\n                    <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                    <ion-icon name="ios-heart"></ion-icon>\n                    <div>J\'aime pas</div>\n                    </button>\n                </ion-col>\n            \n                <ion-col>\n                    <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                    <ion-icon name="text"></ion-icon>\n                    <div>Commentaires</div>\n                    </button>\n                </ion-col>\n            \n            </ion-row>\n            \n                <ion-item>\n                    <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n                    <button ion-button (click)="commenter(pub)" item-end>COM</button>\n                </ion-item>\n\n        </ion-card>\n    </ion-list>\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/profile/profile.html"*/,
+            selector: 'page-profile',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/profile/profile.html"*/'<ion-header>\n        <ion-toolbar class="toolbar-background ">\n                <button ion-button menuToggle>\n                        <ion-icon name="menu"></ion-icon>\n                      </button>\n                <ion-buttons end>\n                  <button ion-button icon-only  (click)="settings()">\n                    <ion-icon name="ios-settings-outline"></ion-icon>\n                  </button>\n                </ion-buttons>\n              </ion-toolbar> \n      \n</ion-header>\n\n\n<ion-content padding>\n<ion-card >\n    <ion-list >\n        <ion-item class="withAvatar"></ion-item>\n            <ion-item class="transparant">\n                <ion-avatar item-start>\n                    <img id="profile-image" src="../../assets/imgs/Moi.jpg">\n                </ion-avatar>\n                <ion-fab>\n                    <button ion-fab mini (click)="changePicture()">  <ion-icon name="md-camera"></ion-icon></button>\n                </ion-fab>\n            </ion-item>\n            <ion-item class="parttransparant">\n                <div class="name">{{currentUser.displayName}}</div>      \n                <h5>Animal lover <ion-badge item-end> <ion-icon name="md-star" color="light"></ion-icon>20</ion-badge></h5>\n            </ion-item>\n            <ion-item>\n                <div padding>\n                    <ion-segment [(ngModel)]="userLog">\n                      <ion-segment-button value="monActivite">\n                        MON ACTIVITE\n                      </ion-segment-button>\n                      <ion-segment-button value="favoris">\n                        MES FAVORIS\n                      </ion-segment-button>\n                    </ion-segment>\n                  </div>\n            </ion-item>\n    </ion-list>\n</ion-card>\n<ion-card>\n<div [ngSwitch]="userLog">\n    <ion-list *ngSwitchCase="\'monActivite\'"  >\n        <ion-list *ngIf="publications" >\n            <ion-card *ngFor="let pub of publications" >\n                <ion-item>\n                    <!-- <ion-avatar item-start>\n                        <img src="{{currentUser.imageUrl}}">\n                    </ion-avatar> -->\n                    <ion-avatar item-start class="edit" ><img src="assets/imgs/Moi.jpg"></ion-avatar>\n                    <ion-card-header *ngIf="pub.order == \'sharingannonce\'; else templateName" >\n                            <ion-item>\n                                   \n                                    <h3>{{currentUser.displayName}} à partager</h3> <ion-badge class="besoin"item-end>{{pub.type}}</ion-badge>\n                        <p> de {{pub.userDipslayName}}</p>\n                        </ion-item>\n                    </ion-card-header>\n                    <p>{{pub.time}}</p>\n                    <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>\n                </ion-item>\n                <ng-template #templateName>\n                {{currentUser.displayName}} a partagé une {{pub.order}}\n                </ng-template>\n                <ion-row>\n                    <ion-slides zoom="true" pager>\n                        <ion-slide *ngFor="let img of pub.imagesUrl">\n                            <img style="width: 359px; height: 300px;" src="{{img}}">\n                        </ion-slide>\n                    </ion-slides>\n                </ion-row>\n                <ion-card-content>\n                    <p *ngIf="pub.order == \'annonce\'" >{{pub.descAnnonce}}</p>\n                    <p *ngIf="pub.order == \'publication\'" >{{pub.content}}</p>\n                </ion-card-content>\n                <ion-row> \n                    <ion-col *ngIf="!pub.liked" >\n                        <button (click)="likePub(pub)" ion-button icon-left clear small>\n                            <ion-icon name="ios-heart-outline"></ion-icon>\n                            <div>J\'aime</div>\n                        </button>\n                    </ion-col>\n                    <ion-col *ngIf="pub.liked" >\n                        <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                            <ion-icon name="ios-heart"></ion-icon>\n                            <div>J\'aime pas</div>\n                        </button>\n                    </ion-col>\n                    <ion-col>\n                        <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                            <ion-icon name="text"></ion-icon>\n                            <div>Commentaires</div>\n                        </button>\n                    </ion-col>\n                </ion-row>\n                <ion-item>\n                    <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n                    <button ion-button (click)="commenter(pub)" item-end>COM</button>\n                </ion-item>\n            </ion-card>\n        </ion-list>\n        <ion-list *ngSwitchCase="\'favoris\'">\n            <ion-item>\n                <h2>favoris</h2>\n            </ion-item>\n        </ion-list>\n    </ion-list>\n</div>\n</ion-card>\n</ion-content>\n\n<!-- \n<img (click)="changePicture()" id="profile-image" src="{{currentUser.imageUrl}}">\n<button ion-button (click)="settings()">Parametere</button>\n\n<ion-list *ngIf="publications" >\n    <ion-card *ngFor="let pub of publications" >\n\n        <ion-item>\n            <ion-avatar item-start>\n              <img src="{{currentUser.imageUrl}}">\n            </ion-avatar>\n            <ion-card-header *ngIf="pub.order == \'sharingannonce\'; else templateName" >\n                <p>{{currentUser.displayName}} a partagé une {{pub.type}} de {{pub.userDipslayName}}</p>\n            </ion-card-header>\n            <p>{{pub.time}}</p>\n\n            <ion-icon (click)="showMore(pub)" item-end name="ios-more"></ion-icon>\n        </ion-item>\n\n        <ng-template #templateName>\n            {{currentUser.displayName}} a partagé une {{pub.order}}\n        </ng-template>\n\n        <ion-row>\n            <ion-slides zoom="true" pager>\n                <ion-slide *ngFor="let img of pub.imagesUrl">\n                    <img style="width: 359px; height: 300px;" src="{{img}}">\n                </ion-slide>\n            </ion-slides>\n        </ion-row>\n\n        <ion-card-content>\n            <p *ngIf="pub.order == \'annonce\'" >{{pub.descAnnonce}}</p>\n            <p *ngIf="pub.order == \'publication\'" >{{pub.content}}</p>\n        </ion-card-content>\n\n        <ion-row> -->\n            <!-- already commented\n            *ngIf="!isLiked(pub)"  -->\n            <!-- <ion-col *ngIf="!pub.liked" >\n                <button (click)="likePub(pub)" ion-button icon-left clear small>\n                <ion-icon name="ios-heart-outline"></ion-icon>\n                <div>J\'aime</div>\n                </button>\n            </ion-col> -->\n            <!-- already commented\n              *ngIf="isLiked(pub)"  -->\n            <!-- <ion-col *ngIf="pub.liked" >\n                <button (click)="dislikePub(pub)" ion-button icon-left clear small>\n                <ion-icon name="ios-heart"></ion-icon>\n                <div>J\'aime pas</div>\n                </button>\n            </ion-col>\n        \n            <ion-col>\n                <button (click)="openCommentsModal(pub)" ion-button icon-left clear small>\n                <ion-icon name="text"></ion-icon>\n                <div>Commentaires</div>\n                </button>\n            </ion-col>\n        \n        </ion-row>\n        \n            <ion-item>\n                <ion-input placeholder="ajouter un commentaire" [(ngModel)]="pub.myComment" item-start> </ion-input>\n                <button ion-button (click)="commenter(pub)" item-end>COM</button>\n            </ion-item>\n\n    </ion-card>\n</ion-list> -->\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/profile/profile.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* ActionSheetController */],
@@ -4094,7 +4099,7 @@ var SettingsProfilePage = (function () {
     };
     SettingsProfilePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-settings-profile',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/settings-profile/settings-profile.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>settingsProfile</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n  <ion-item>\n      <ion-label fixed>Nom a afficher</ion-label>\n      <ion-input [(ngModel)]="currentUser.displayName" placeholder="{{currentUser.displayName}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>Description</ion-label>\n    <ion-input [(ngModel)]="currentUser.description" placeholder="{{currentUser.description}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>nom</ion-label>\n    <ion-input [(ngModel)]="currentUser.nom" placeholder="{{currentUser.nom}}" ></ion-input>\n  </ion-item> \n\n  <ion-item>\n    <ion-label fixed>prenom</ion-label>\n    <ion-input [(ngModel)]="currentUser.prenom" placeholder="{{currentUser.prenom}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>numero telephone</ion-label>\n    <ion-input [(ngModel)]="currentUser.tel" type="tel" placeholder="{{currentUser.tel}}"></ion-input>\n  </ion-item>\n\n  <button ion-button block (click)="updateProfile(currentUser)">Valider les modification</button>\n\n  <!-- seperator here -->\n\n  <div *ngIf="currentUser.connectionType == \'mail\'" >\n    <h2>Changer votre mot de passe</h2>\n\n    <ion-item>\n      <ion-label fixed>Ancien mot de passe</ion-label>\n      <ion-input [(ngModel)]="oldPassword"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label fixed>Nouveau mot de passe</ion-label>\n      <ion-input [(ngModel)]="newPassword"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label fixed>Confirmer votre nouveau mot de passe</ion-label>\n      <ion-input [(ngModel)]="confirmNewPassword"></ion-input>\n    </ion-item>\n\n    <button ion-button block (click)="resetPassword()">Changer mot de passe</button>\n  </div>\n\n\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/settings-profile/settings-profile.html"*/,
+            selector: 'page-settings-profile',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/settings-profile/settings-profile.html"*/'<ion-header>\n\n  <ion-navbar>\n    <ion-title>settingsProfile</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n  \n<!-- \n  <ion-item>\n      <ion-label fixed>Nom a afficher</ion-label>\n      <ion-input [(ngModel)]="currentUser.displayName" placeholder="{{currentUser.displayName}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>Description</ion-label>\n    <ion-input [(ngModel)]="currentUser.description" placeholder="{{currentUser.description}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>nom</ion-label>\n    <ion-input [(ngModel)]="currentUser.nom" placeholder="{{currentUser.nom}}" ></ion-input>\n  </ion-item> \n\n  <ion-item>\n    <ion-label fixed>prenom</ion-label>\n    <ion-input [(ngModel)]="currentUser.prenom" placeholder="{{currentUser.prenom}}"></ion-input>\n  </ion-item>\n\n  <ion-item>\n    <ion-label fixed>numero telephone</ion-label>\n    <ion-input [(ngModel)]="currentUser.tel" type="tel" placeholder="{{currentUser.tel}}"></ion-input>\n  </ion-item>\n\n  <button ion-button block (click)="updateProfile(currentUser)">Valider les modification</button> -->\n\n  <!-- seperator here -->\n<!-- \n  <div *ngIf="currentUser.connectionType == \'mail\'" >\n    <h2>Changer votre mot de passe</h2>\n\n    <ion-item>\n      <ion-label fixed>Ancien mot de passe</ion-label>\n      <ion-input [(ngModel)]="oldPassword"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label fixed>Nouveau mot de passe</ion-label>\n      <ion-input [(ngModel)]="newPassword"></ion-input>\n    </ion-item>\n\n    <ion-item>\n      <ion-label fixed>Confirmer votre nouveau mot de passe</ion-label>\n      <ion-input [(ngModel)]="confirmNewPassword"></ion-input>\n    </ion-item>\n\n    <button ion-button block (click)="resetPassword()">Changer mot de passe</button>\n  </div> -->\n\n\n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/settings-profile/settings-profile.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_2__providers_usercrud_usercrud__["a" /* UsercrudProvider */],
@@ -4162,7 +4167,7 @@ var FeedbackPage = (function () {
     };
     FeedbackPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-feedback',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/feedback/feedback.html"*/'\n<ion-header>\n  <ion-navbar>\n    <button ion-button icon-only menuToggle  >\n        <ion-icon name="menu"></ion-icon>\n    </button>\n  <ion-title>\n    Feedback\n  </ion-title>\n</ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <ion-fab bottom right >\n      <button (click)="goToAddFeeback()" ion-fab><ion-icon ios="ios-add" md="md-add"></ion-icon></button>\n  </ion-fab>\n\n  <ion-list *ngIf="feedbacks" >\n    <ion-item *ngFor="let feed of feedbacks" >\n      <h2>{{feed.about}}</h2>   \n      <p>{{feed.contenu}}</p>\n    </ion-item>\n  </ion-list>\n  \n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/feedback/feedback.html"*/,
+            selector: 'page-feedback',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/feedback/feedback.html"*/'\n<ion-header>\n  <ion-navbar>\n    <button ion-button icon-only menuToggle  >\n        <ion-icon name="menu"></ion-icon>\n    </button>\n  <ion-title>\n    Feedback\n  </ion-title>\n</ion-navbar>\n</ion-header>\n\n\n<ion-content padding>\n  <ion-fab bottom right >\n      <button (click)="goToAddFeeback()" ion-fab><ion-icon ios="ios-add" md="md-add"></ion-icon></button>\n  </ion-fab>\n\n  <ion-list *ngIf="feedbacks" >\n    <ion-item *ngFor="let feed of feedbacks" >\n      <h2>{{feed.about}}</h2>   \n      <p>{{feed.contenu}}</p>\n    </ion-item>\n  </ion-list>\n  \n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/feedback/feedback.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* ModalController */],
@@ -4233,7 +4238,7 @@ var AddfeedbackmodalPage = (function () {
     };
     AddfeedbackmodalPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-addfeedbackmodal',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/addfeedbackmodal/addfeedbackmodal.html"*/'<!--\n  Generated template for the AddfeedbackmodalPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n    <ion-navbar>\n        <ion-buttons start>\n            <button ion-button (click)="goBack()">\n                <ion-icon name="md-arrow-back"></ion-icon>\n            </button>\n        </ion-buttons>\n      <ion-title>Envoyer un feedback</ion-title>\n    </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n    <ion-item>\n        <ion-label floating >A propos</ion-label>\n        <ion-input [(ngModel)]="feedBack.about" type="text"> </ion-input>\n    </ion-item> \n\n    <ion-item>\n        <ion-label floating >Contenu</ion-label>\n        <ion-input [(ngModel)]="feedBack.content" type="text"> </ion-input>\n    </ion-item>\n\n    <ion-item>\n      <button ion-button (click)="sendFeedback(feedBack)" item-end>Envoyer</button>\n    </ion-item>\n\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/addfeedbackmodal/addfeedbackmodal.html"*/,
+            selector: 'page-addfeedbackmodal',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/addfeedbackmodal/addfeedbackmodal.html"*/'<!--\n  Generated template for the AddfeedbackmodalPage page.\n\n  See http://ionicframework.com/docs/components/#navigation for more info on\n  Ionic pages and navigation.\n-->\n<ion-header>\n\n    <ion-navbar>\n        <ion-buttons start>\n            <button ion-button (click)="goBack()">\n                <ion-icon name="md-arrow-back"></ion-icon>\n            </button>\n        </ion-buttons>\n      <ion-title>Envoyer un feedback</ion-title>\n    </ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n    <ion-item>\n        <ion-label floating >A propos</ion-label>\n        <ion-input [(ngModel)]="feedBack.about" type="text"> </ion-input>\n    </ion-item> \n\n    <ion-item>\n        <ion-label floating >Contenu</ion-label>\n        <ion-input [(ngModel)]="feedBack.content" type="text"> </ion-input>\n    </ion-item>\n\n    <ion-item>\n      <button ion-button (click)="sendFeedback(feedBack)" item-end>Envoyer</button>\n    </ion-item>\n\n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/addfeedbackmodal/addfeedbackmodal.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["o" /* ViewController */],
@@ -4269,46 +4274,46 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(268);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_status_bar__ = __webpack_require__(271);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_status_bar__ = __webpack_require__(272);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_http__ = __webpack_require__(423);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_common_http__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_angularfire2__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_angularfire2_database__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_google_plus__ = __webpack_require__(323);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_google_plus__ = __webpack_require__(324);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_facebook__ = __webpack_require__(324);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_facebook__ = __webpack_require__(325);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_camera__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_storage__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_google_maps__ = __webpack_require__(520);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__ionic_native_image_picker__ = __webpack_require__(521);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_location_accuracy__ = __webpack_require__(522);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__ionic_native_native_geocoder__ = __webpack_require__(76);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ionic_native_fcm__ = __webpack_require__(325);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ionic_native_fcm__ = __webpack_require__(326);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__ionic_native_diagnostic__ = __webpack_require__(52);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__ionic_native_media_capture__ = __webpack_require__(326);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__ionic_native_media__ = __webpack_require__(327);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__ionic_native_file__ = __webpack_require__(328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__ionic_native_media_capture__ = __webpack_require__(327);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__ionic_native_media__ = __webpack_require__(328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__ionic_native_file__ = __webpack_require__(329);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24_firebase__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24_firebase___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_24_firebase__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__firebase_credentials__ = __webpack_require__(549);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__app_component__ = __webpack_require__(550);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__pages_home_home__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pages_signup_signup__ = __webpack_require__(340);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pages_login_login__ = __webpack_require__(339);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pages_login_login__ = __webpack_require__(165);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pages_first_connection_first_connection__ = __webpack_require__(341);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__pages_complete_profile_complete_profile__ = __webpack_require__(342);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__pages_tabs_tabs__ = __webpack_require__(343);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__pages_messages_messages__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__pages_messages_messages__ = __webpack_require__(172);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__pages_poster_poster__ = __webpack_require__(347);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__pages_invitation_invitation__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__pages_invitation_invitation__ = __webpack_require__(174);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__pages_annonces_annonces__ = __webpack_require__(348);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__pages_search_search__ = __webpack_require__(344);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__pages_annonce_a0_annonce_a0__ = __webpack_require__(167);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__pages_annonce_a1_annonce_a1__ = __webpack_require__(170);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__pages_annonce_a3_annonce_a3__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__pages_annonce_a2_annonce_a2__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__pages_annonce_a0_annonce_a0__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__pages_annonce_a1_annonce_a1__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__pages_annonce_a3_annonce_a3__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__pages_annonce_a2_annonce_a2__ = __webpack_require__(170);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__pages_conseil_modal_conseil_modal__ = __webpack_require__(345);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__pages_publication_modal_publication_modal__ = __webpack_require__(346);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__pages_comments_modal_comments_modal__ = __webpack_require__(99);
@@ -4316,13 +4321,13 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__pages_profile_profile__ = __webpack_require__(351);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__pages_map_map__ = __webpack_require__(349);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__pages_settings_profile_settings_profile__ = __webpack_require__(352);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__pages_messaging_modal_messaging_modal__ = __webpack_require__(172);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__pages_otherprofile_otherprofile__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__pages_messaging_modal_messaging_modal__ = __webpack_require__(173);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__pages_otherprofile_otherprofile__ = __webpack_require__(166);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__pages_feedback_feedback__ = __webpack_require__(353);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__pages_addfeedbackmodal_addfeedbackmodal__ = __webpack_require__(354);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__providers_usercrud_usercrud__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__providers_annonce_crud_annonce_crud__ = __webpack_require__(55);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__providers_pubs_pubs__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__providers_pubs_pubs__ = __webpack_require__(167);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -4508,10 +4513,10 @@ var AppModule = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__search_search__ = __webpack_require__(344);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__conseil_modal_conseil_modal__ = __webpack_require__(345);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__publication_modal_publication_modal__ = __webpack_require__(346);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__annonce_a0_annonce_a0__ = __webpack_require__(167);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__annonce_a3_annonce_a3__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__annonce_a2_annonce_a2__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__annonce_a1_annonce_a1__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__annonce_a0_annonce_a0__ = __webpack_require__(168);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__annonce_a3_annonce_a3__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__annonce_a2_annonce_a2__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__annonce_a1_annonce_a1__ = __webpack_require__(171);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__providers_usercrud_usercrud__ = __webpack_require__(19);
@@ -4694,7 +4699,7 @@ var HomePage = (function () {
     };
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-home',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/home/home.html"*/'<ion-header> \n    <ion-toolbar>\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n      <ion-title>Accueil</ion-title> \n      <ion-buttons end>\n        <button ion-button icon-only (click)="rootSearch()"  >\n          <ion-icon name="search"></ion-icon>\n        </button>\n      </ion-buttons>\n    </ion-toolbar> \n  </ion-header>\n\n<ion-content>\n\n     <!-- this fab is placed at bottom right -->\n     <ion-fab bottom right>\n      <button ion-fab color="primary">Button</button>\n      <ion-fab-list side="top">\n        <button (click)="openConseilModal()" ion-fab>Conseil</button>\n        <button (click)="openPublicationModal()" ion-fab>Publication</button>\n\n        <button (click)="goToA3()" ion-fab>A3</button>\n        <button (click)="goToA2()" ion-fab>A2</button>\n        <button (click)="goToA1()" ion-fab>A1</button>\n        <button (click)="goToA0()" ion-fab>A0</button>\n      </ion-fab-list>\n    </ion-fab>\n\n    <ion-card>\n\n      <ion-item>\n        <ion-avatar item-start>\n          <img src="assets/imgs/hanimo-logo.png">\n        </ion-avatar>\n        <h2>Marty McFly</h2>\n        <p>November 5, 1955</p>\n      </ion-item>\n    \n      \n\n      <!--> galerie slider -->\n      <ion-row>\n        <ion-slides pager>\n          <ion-slide>\n            <img src="assets/imgs/defaultAvatar.png">\n          </ion-slide>\n          <ion-slide>\n            <img src="assets/imgs/defaultAvatar.png">\n          </ion-slide>\n          <ion-slide>\n            <img src="assets/imgs/defaultAvatar.png">\n          </ion-slide>\n        </ion-slides>\n      </ion-row>\n      \n    \n      <ion-card-content>\n        <p>Wait a minute. Wait a minute, Doc. Uhhh... Are you telling me that you built a time machine... out of a DeLorean?! Whoa. This is heavy.</p>\n      </ion-card-content>\n    \n      <ion-row>\n\n        <ion-col>\n          <button ion-button icon-left clear small>\n            <ion-icon name="ios-heart-outline"></ion-icon>\n            <div>J\'aime</div>\n          </button>\n        </ion-col>\n\n        <ion-col>\n          <button ion-button icon-left clear small>\n            <ion-icon name="text"></ion-icon>\n            <div>Commenter</div>\n          </button>\n        </ion-col>\n\n        <ion-col>\n          <button ion-button icon-left clear small>\n            <ion-icon name="share"></ion-icon>\n            <div>Partage</div>\n          </button>\n        </ion-col>\n\n      </ion-row>\n    \n    </ion-card>    \n\n<!-- <button (click)="signOut()" ion-button block>Sign Out</button>\n<button (click)="getFriendList()" ion-button block>Friend List</button>\n<button (click)="showFriend()" ion-button block>show Friend List</button>\n<button (click)="updateReputation()" ion-button block>updateReputation</button>\n<button (click)="getPosition()" ion-button block>getPosition</button> -->\n<button (click)="sendNotification()" ion-button block>sendNotification</button>\n</ion-content>'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/home/home.html"*/
+            selector: 'page-home',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/home/home.html"*/'<ion-header> \n    <ion-toolbar class="toolbar-background ">\n      <button ion-button menuToggle>\n        <ion-icon name="menu"></ion-icon>\n      </button>\n      <ion-title class="title-logo">Hanimo</ion-title> \n      <ion-buttons end>\n        <button ion-button icon-only (click)="rootSearch()"  >\n          <ion-icon name="search"></ion-icon>\n        </button>\n      </ion-buttons>\n    </ion-toolbar> \n  </ion-header>\n\n<ion-content>\n  <!-- this fab is placed at bottom right -->\n  <ion-fab bottom right>\n    <button ion-fab id="cancel" ><ion-icon name="ios-create-outline" color="light"></ion-icon></button>\n    <ion-fab-list side="top">\n      <button (click)="openConseilModal()" ion-fab id="conseil">  <ion-icon name="md-alert" color="light"></ion-icon>\n\n        <ion-label>Conseil</ion-label></button>\n      <button (click)="openPublicationModal()" ion-fab id="pub"><img src="assets/imgs/autre.png">\n        <ion-label>Publication</ion-label></button>\n      <button (click)="goToA3()" ion-fab id="a3"><img src="assets/imgs/aide.png">\n        <ion-label>Besoin d\'aide</ion-label></button>\n      <button (click)="goToA2()" ion-fab id="a2"><img src="assets/imgs/foyer.png">\n        <ion-label>Cherche foyer</ion-label></button>\n      <button (click)="goToA1()" ion-fab id="a1"><img src="assets/imgs/maladie.png">\n        <ion-label>Blessure/Maladie</ion-label></button>\n      <button (click)="goToA0()" ion-fab id="a0"><img src="assets/imgs/danger.png">\n        <ion-label>En danger</ion-label></button>\n    </ion-fab-list>\n  </ion-fab>\n  \n  <ion-card >\n    <ion-item>\n      <ion-avatar item-start class="edit" ><img src="assets/imgs/Moi.jpg"></ion-avatar>\n      <h3>Anwar Hemdene</h3>\n      <p>05/11/2018 -14:24 </p><ion-badge class="besoin"item-end>Besoin d\'aide</ion-badge>\n    </ion-item>\n    <!--> galerie slider -->\n    <ion-row>\n      \n      <ion-slides pager>\n        <ion-slide>\n          <img src="assets/imgs/animal1.jpeg">\n          <button outline>\n              <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab> \n          </button>\n                   \n        </ion-slide>\n        <ion-slide>\n          <img src="assets/imgs/animal2.jpeg">\n          <ion-fab right bottom class="marker"><img src="assets/imgs/marker.png"></ion-fab>\n        </ion-slide>\n        \n      </ion-slides>\n      \n    </ion-row>\n    <ion-card-content>\n      <p>Wait a minute. Wait a minute, Doc. Uhhh... Are you telling me that you built a time machine... out of a DeLorean?! Whoa. This is heavy.</p>\n    \n<ul class="flex-container flex-start">      <li class="flex-item">\n        <button ion-button icon-left clear >\n          <div class="like">\n              <img src="assets/imgs/like.png"></div>  \n        </button>\n      </li>\n      <li class="flex-item">\n        <button ion-button icon-left clear >\n          <div class="comment">\n              <img src="assets/imgs/comment.png"></div>  \n        </button>\n      </li>\n      <li class="flex-item">\n        <button ion-button icon-left clear >\n          <div class="share">\n            <img  src="assets/imgs/share.png">\n          </div>  \n        </button>\n      </li>\n    </ul>\n  </ion-card-content>\n  </ion-card>    \n\n<!-- <button (click)="signOut()" ion-button block>Sign Out</button>\n<button (click)="getFriendList()" ion-button block>Friend List</button>\n<button (click)="showFriend()" ion-button block>show Friend List</button>\n<button (click)="updateReputation()" ion-button block>updateReputation</button>\n<button (click)="getPosition()" ion-button block>getPosition</button> -->\n<!-- <button (click)="sendNotification()" ion-button block>sendNotification</button> -->\n</ion-content>'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/home/home.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* ModalController */],
             __WEBPACK_IMPORTED_MODULE_4__angular_common_http___["a" /* HttpClient */],
@@ -4933,16 +4938,16 @@ var AnnonceCrudProvider = (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(271);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(272);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_splash_screen__ = __webpack_require__(268);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_fcm__ = __webpack_require__(325);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_login_login__ = __webpack_require__(339);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_splash_screen__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_fcm__ = __webpack_require__(326);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_login_login__ = __webpack_require__(165);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_angularfire2_auth__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_angularfire2_database__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_home_home__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_invitation_invitation__ = __webpack_require__(173);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_messages_messages__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_invitation_invitation__ = __webpack_require__(174);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_messages_messages__ = __webpack_require__(172);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_annonces_annonces__ = __webpack_require__(348);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_friends_friends__ = __webpack_require__(350);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__pages_profile_profile__ = __webpack_require__(351);
@@ -5135,7 +5140,7 @@ var MyApp = (function () {
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* Nav */])
     ], MyApp.prototype, "nav", void 0);
     MyApp = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/app/app.html"*/'<ion-menu [content]="content" >\n    <ion-header  >\n      <ion-toolbar  color="primary" >\n        <ion-title>Menu</ion-title>\n      </ion-toolbar>\n    </ion-header>\n  \n    <ion-content>\n      <ion-list>\n          \n          <ion-list (click)="goToProfile()" class="profile" no-lines>\n                  <ion-item >\n                    <ion-avatar item-start>\n                      <img src="{{currentUser.imageUrl}}">\n                    </ion-avatar><br>\n                    \n                  </ion-item>\n                  <ion-item>\n                      <h2 > {{currentUser.displayName}}</h2>\n                  </ion-item>\n            </ion-list>\n        <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n          \n          {{p.title}}\n        </button>\n        <button menuClose ion-item (click)="Deconnexion()">          \n          Deconnexion\n        </button>\n      </ion-list>\n    </ion-content>\n  \n  </ion-menu>\n\n  <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/app/app.html"*/
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/app/app.html"*/'<ion-menu [content]="content" >\n    <ion-header  >\n      <ion-toolbar  color="primary" >\n        <ion-title>Menu</ion-title>\n      </ion-toolbar>\n    </ion-header>\n  \n    <ion-content>\n      <ion-list>\n          \n          <ion-list (click)="goToProfile()" class="profile" no-lines>\n                  <ion-item >\n                    <ion-avatar item-start>\n                      <img src="{{currentUser.imageUrl}}">\n                    </ion-avatar><br>\n                    \n                  </ion-item>\n                  <ion-item>\n                      <h2 > {{currentUser.displayName}}</h2>\n                  </ion-item>\n            </ion-list>\n        <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">\n          \n          {{p.title}}\n        </button>\n        <button menuClose ion-item (click)="Deconnexion()">          \n          Deconnexion\n        </button>\n      </ion-list>\n    </ion-content>\n  \n  </ion-menu>\n\n  <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/app/app.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* Platform */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */],
             __WEBPACK_IMPORTED_MODULE_8_angularfire2_database__["a" /* AngularFireDatabase */],
@@ -5235,7 +5240,7 @@ var CommentsModalPage = (function () {
     };
     CommentsModalPage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-comments-modal',template:/*ion-inline-start:"/home/hamza/Bureau/pfeHanimo/src/pages/comments-modal/comments-modal.html"*/'<ion-content padding>\n\n  <button ion-button block (click)="dismissModal()" >{{titleAnnonce}}</button>\n  <ion-list *ngIf="comments" >\n\n    <ion-item *ngFor="let comment of comments" >\n\n      <ion-avatar item-start>\n        <img src="{{comment.avaterUrl}}">\n      </ion-avatar>\n\n      <h2>{{comment.displayName}}</h2>\n\n      <h3>{{comment.commentContent}}</h3>\n\n    </ion-item>\n\n  </ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/home/hamza/Bureau/pfeHanimo/src/pages/comments-modal/comments-modal.html"*/,
+            selector: 'page-comments-modal',template:/*ion-inline-start:"/home/anwar/pfeHanimo/src/pages/comments-modal/comments-modal.html"*/'<ion-content padding>\n\n  <button ion-button block (click)="dismissModal()" >{{titleAnnonce}}</button>\n  <ion-list *ngIf="comments" >\n\n    <ion-item *ngFor="let comment of comments" >\n\n      <ion-avatar item-start>\n        <img src="{{comment.avaterUrl}}">\n      </ion-avatar>\n\n      <h2>{{comment.displayName}}</h2>\n\n      <h3>{{comment.commentContent}}</h3>\n\n    </ion-item>\n\n  </ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/home/anwar/pfeHanimo/src/pages/comments-modal/comments-modal.html"*/,
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* NavParams */],
             __WEBPACK_IMPORTED_MODULE_2_angularfire2_database__["a" /* AngularFireDatabase */],

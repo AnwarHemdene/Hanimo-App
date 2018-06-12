@@ -1,13 +1,106 @@
 page-otherprofile {
-
-    #profile-image {
-        display: block;
-        border-radius: 100px;
-        border: 1px solid #fff;
-        width: 128px;
-        height: 128px;
-        margin: 30px auto 0;
-        box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
-    }
+    
+        #profile-image {
+            display: block;
+            border-radius: 100px;
+            border: 3px solid #fff;
+            width: 140px;
+            height: 140px;
+            margin: 25% 55%;
+            
+            // box-shadow: 0px 0px 4px rgba(0,0,0,0.7);
+        
+        }
+        .withAvatar {
+            background: url("../../assets/imgs/bg.jpg") ;
+            background-repeat:no-repeat;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+                // -webkit-filter: blur(5px);
+                opacity: 0.7;
+                height: 300px;
+               
+        }
+        .transparant{
+            background: transparent;
+            margin-top: -290px;
+            margin-left: 10px;
+            margin-bottom: -45px;
+        }
+        .parttransparant{
+            background: transparent;
+            text-align: center;
+            color: black;
+        }
+        .item-md p {
+            color: #131212;
+            margin-top: 0px;
+            font-size: 1.8rem;
+        }
+        img{
+            opacity: 1.0 !important;
+        }
+        
+        .toolbar {
+            .toolbar-background {
+              background: transparent;
+            }
+        }
+        .card-md{
+            // background-color:red ;
+            height: auto;
+            width: 120%;
+            margin: -16px;
+            text-align: center;
+            box-shadow: none;
+            border-radius: 0px;
+            
+        }
+        ion-app.md [padding] .scroll-content{
+            margin: -10px;
+            padding: 0px;
+        }
+        ion-fab {
+            position: absolute;
+            z-index: 999;
+            margin-top: 20px;
+            margin-left: 5px;
+            .fab-md {
+                color: #48392a;
+                background-color: #f2cd5d;
+            }
+        }
+        .badge-md {
+            border-radius: 10px;
+            color: #fff;
+            background-color: #48392a;
+        }
+    //Active
+        .segment-md .segment-button.activated, .segment-md .segment-button.segment-activated {
+            border-color: transparent;
+            opacity: 0.5;
+            border-radius: 19px;
+            color: #fff;
+            background-color: #48392a;
+            height: 2.5rem;
+            font-size: 1rem;
+            line-height:2.5rem;
+        }
+    
+    //Not active
+    .segment-md .segment-button {
+        background: transparent;
+        margin-top: -15px;
+        color: #48392a;
+            height: 2.5rem;
+            border-bottom-width: 0px;
+            font-size: 1rem;
+            line-height:2.5rem;
+        }
+    
+    
+    
 
 }

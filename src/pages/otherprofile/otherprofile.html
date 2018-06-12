@@ -5,42 +5,69 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <ion-navbar>
-      <ion-buttons start>
-          <button ion-button (click)="goBack()">
-              <ion-icon name="md-arrow-back"></ion-icon>
-          </button>
-      </ion-buttons>
-    <ion-title>{{user.displayName}}</ion-title>
-  </ion-navbar>
-
+    <ion-toolbar class="toolbar-background ">
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-buttons end>
+            <button ion-button icon-only  >
+                <ion-icon name="md-alert"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-toolbar> 
+    <!-- <ion-title>{{user.displayName}}</ion-title> -->
 </ion-header>
 
 
 <ion-content padding>
+    <ion-card >
+        <ion-list >
+            <ion-item class="withAvatar"></ion-item>
+                    <ion-item class="transparant">
+                    <ion-avatar item-start>
+                        <img id="profile-image" src="{{user.imageUrl}}">
+                    </ion-avatar>
+                </ion-item>
+                <ion-item class="parttransparant">
+                    <p >{{user.displayName}}</p>      
+                    <h5>Animal lover <ion-badge item-end> 
+                        <ion-icon name="md-star" color="light"></ion-icon>
+                        20</ion-badge>
+                    </h5>
+                </ion-item>
+                <!-- <ion-segment [(ngModel)]="userLog">
+                    <ion-segment-button value="monActivite">
+                        ACTIVITE
+                    </ion-segment-button>
+                </ion-segment> -->
+        </ion-list>
+    </ion-card>
 
-    <img id="profile-image" src="{{user.imageUrl}}">
-    <ion-item>
-        <!-- amis -->
+</ion-content>
+
+
+
+    <!-- <img id="profile-image" src="{{user.imageUrl}}"> -->
+    <!-- <ion-item>
+        amis
       <button item-start *ngIf="relationStatus == 1" ion-button >Amis</button>
       <button item-start (click)="supprimerAmis()" *ngIf="relationStatus == 1" ion-button >Supprimer</button>
       
-      <!-- envoyer invitation -->
+      envoyer invitation
       <button item-start (click)="sendInvitation()" *ngIf="relationStatus == 0" ion-button >Envoyer une invitation</button>
 
-      <!-- invitation envoyee -->
+      invitation envoyee
       <button item-start (click)="annulerInvitation()" *ngIf="relationStatus == 2" ion-button >Invitation envoyée</button>
       
-      <!-- accepter ou decliner invitation -->
+      accepter ou decliner invitation
       <button item-start (click)="accepterInvitation()" *ngIf="relationStatus == 3" ion-button >Accrepter l invitation</button>
       <button item-start (click)="declinerInvitation()" *ngIf="relationStatus == 3" ion-button >decliner l invitation</button>
 
-      <!-- a propos -->
+      a propos
       <button item-end ion-button >A propos</button>
-    </ion-item>
+    </ion-item> -->
     
-
+<!-- 
     <ion-list *ngIf="publications && relationStatus == 1" >
         <ion-card *ngFor="let pub of publications" >
 
@@ -71,17 +98,17 @@
                 <p *ngIf="pub.order == 'publication'" >{{pub.content}}</p>
             </ion-card-content>
 
-            <ion-row>
+            <ion-row> -->
                 <!-- *ngIf="!isLiked(pub)"  -->
-                <ion-col *ngIf="!pub.liked" >
+                <!-- <ion-col *ngIf="!pub.liked" >
                     <button (click)="likePub(pub)" ion-button icon-left clear small>
                     <ion-icon name="ios-heart-outline"></ion-icon>
                     <div>J'aime</div>
                     </button>
-                </ion-col>
+                </ion-col> -->
             
                 <!--   *ngIf="isLiked(pub)"  -->
-                <ion-col *ngIf="pub.liked" >
+                <!-- <ion-col *ngIf="pub.liked" >
                     <button (click)="dislikePub(pub)" ion-button icon-left clear small>
                     <ion-icon name="ios-heart"></ion-icon>
                     <div>J'aime pas</div>
@@ -103,7 +130,6 @@
                 </ion-item>
 
         </ion-card>
-    </ion-list>
+    </ion-list> -->
 
 
-</ion-content>

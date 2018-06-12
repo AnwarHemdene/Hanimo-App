@@ -172,7 +172,8 @@ page-home {
 
 ion-fab-list{
     img {
-        max-width: 70%;}
+        max-width: 70%;
+    }
         
 }
 button[ion-fab] {
@@ -195,7 +196,14 @@ button[ion-fab] {
     contain: layout;
     ion-icon {
         font-size: 4.4rem;}
-}
-}
+    }
+    .ion-md-alert:before {
+        font-size: 3rem;
+        margin-bottom: 12px;
+    }
+    .ion-ios-create-outline:before {
+        margin-bottom: 5px;
+        margin-left: 4px;
+    }
 
-
+}

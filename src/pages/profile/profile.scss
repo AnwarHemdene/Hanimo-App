@@ -34,10 +34,20 @@ page-profile {
         text-align: center;
         color: black;
     }
+    .item-md{
+        padding-left: 0px;
+    }
     .item-md p {
         color: #131212;
         margin-top: 0px;
-        font-size: 1.8rem;
+        font-size: 1rem;
+        
+    }
+    .name{
+        font-size: 1.4rem;
+
+    color: #131212;
+    margin-top: 0px;
     }
     img{
         opacity: 1.0 !important;
@@ -100,5 +110,26 @@ page-profile {
         line-height:2.5rem;
     }
 
+
+    ion-badge.besoin.badge.badge-md{
+        margin-top: -3%;
+        margin-right: 15%;
+        font-size: 0.95rem;
+    font-weight: 100;
+    
+    }
+    .card-header-md {
+        padding:0 px;}
+
+
+.item-md ion-avatar ion-img, .item-md ion-avatar img {
+    
+    width: 50px;
+    height: 50px;
+    margin-left: 35px;
+}
+.card-header-md {
+    padding: 0px;
+}
 
 }
